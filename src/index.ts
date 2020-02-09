@@ -1,5 +1,5 @@
 import { ChangableArray } from "./ChangableArray";
-import { SerializableObject } from "./SerializableObject";
+import { ChangableObject } from "./ChangableObject";
 import { ChangableValue } from "./ChangableValue";
 import { SerializableClass1 } from "./SerializableClass1";
 import { Class1 } from "./Class1";
@@ -7,15 +7,15 @@ import { createSerializableClass } from "./createSerializable";
 import { ChangableValueType } from "./ChangableValueType";
 
 const arr1 = new ChangableArray([1, 2, 3, 4]);
-const objVal = new SerializableObject({ prop1: 1, prop2: 2, arr1 });
+const objVal = new ChangableObject({ prop1: 1, prop2: 2, arr1 });
 
 // const numberVal = new ChangableValue(5);
 // const prop1 = new ChangableValue("some string");
 // const prop2 = new ChangableValue(new Date());
 
-// const objVal = new SerializableObject({ prop1, prop2 });
+// const objVal = new ChangableObject({ prop1, prop2 });
 
-// const obj = new SerializableObject({
+// const obj = new ChangableObject({
 //   arr1,
 //   numberVal,
 //   objVal

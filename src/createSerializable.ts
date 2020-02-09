@@ -1,16 +1,16 @@
 import { ChangableValueType } from "./ChangableValueType";
-import { SerializableObject } from "./SerializableObject";
 import { ChangableValue } from "./ChangableValue";
 import { ChangableArray } from "./ChangableArray";
 import { IChangable } from "./interfaces/IChangable";
-import { IChanges } from "./interfaces/IChanges";
+import { ChangableObject } from "./SerializableObject";
+import { ObjectChanges } from "./ObjectChanges";
 
 const createSerializableClass = (
   classConstructor: Object,
   serializableProps: Record<string, ChangableValueType>
 ): Object => {
   return class extends classConstructor implements IChangable {
-    private _serializable: SerializableObject;
+    private _serializable: ChangableObject;
 
     constructor(...args) {
       super(...args);
@@ -18,23 +18,23 @@ const createSerializableClass = (
       const props: Record<string, IChangable> = {};
 
       Object.keys(props).forEach(prop => {
-        const ChangableValueType = serializableProps[prop];
+        const changableType = serializableProps[prop];
         const initialValue = super.prop;
 
         props[prop] =
-          ChangableValueType === ChangableValueType.Value
+          changableType === ChangableValueType.Value
             ? new ChangableValue(initialValue)
             : new ChangableArray(initialValue);
       });
 
-      this._serializable = new SerializableObject(props);
+      this._serializable = new ChangableObject(props);
     }
 
     get changed(): boolean {
       return this._serializable.changed;
     }
 
-    getChanges(): IChanges {
+    getChanges(): ObjectChanges {
       return this._serializable.getChanges();
     }
 
@@ -42,8 +42,8 @@ const createSerializableClass = (
       this._serializable.clearChanges();
     }
 
-    applyChanges(changes: IChanges): void {
-      throw new Error("Not implemented exception: applyChanges()");
+    applyChanges(changes: ObjectChanges): void {
+      this._serializable.applyChanges(changes);
     }
   };
 };

@@ -4,11 +4,11 @@ import { IChangableValue } from "./interfaces/IChangableValue";
 import { ChangableValue } from "./ChangableValue";
 import { IChangable } from "./interfaces/IChangable";
 import { IChanges } from "./interfaces/IChanges";
-import { SerializableObject } from "./SerializableObject";
+import { ChangableObject } from "./ChangableObject";
 
 class SerializableClass1 extends Class1 implements IChangable {
   private _prop1: IChangableValue<number>;
-  private _serializable: SerializableObject;
+  private _serializable: ChangableObject;
 
   constructor(prop1: number) {
     super(prop1);

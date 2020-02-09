@@ -1,17 +1,14 @@
 import { IChangable } from "./interfaces/IChangable";
-import { IChanges } from "./interfaces/IChanges";
-import { ChangesLog } from "./ChangesLog";
+import { ObjectChanges } from "./ObjectChanges";
 
-class SerializableObject implements IChangable {
+class ChangableObject implements IChangable {
   private _props: Record<string, IChangable> = {};
   private _propNames: Array<string> = [];
 
   constructor(props: Record<string, any>) {
     Object.keys(props).forEach(prop => {
       const value = props[prop];
-      // if ((value as IChangable).getChanges) {
       this._props[prop] = value;
-      // }
     });
 
     this._propNames = Object.keys(this._props);
@@ -21,48 +18,38 @@ class SerializableObject implements IChangable {
     return this._propNames.some(prop => this._props[prop].changed);
   }
 
-  set(prop: string, value: any): void {
-    this._props[prop].value = value;
-  }
+  // set(prop: string, value: any): void {
+  //   this._props[prop].value = value;
+  // }
 
-  get(prop: string): any {
-    return this._props[prop].value;
-  }
+  // get(prop: string): any {
+  //   return this._props[prop].value;
+  // }
 
   clearChanges(): void {
     this._propNames.forEach(prop => this._props[prop].clearChanges());
   }
 
-  applyChanges(objChanges: IChanges): void {
-    objChanges.toArray().forEach(({ action, params }) => {
-      if (action !== "changes") {
-        throw new Error(
-          `Invalid action=${action}. Only "changes" action is supported!`
-        );
-      }
-
-      const { changes, prop } = params;
-
-      this._props[prop].applyChanges(changes);
+  applyChanges(objChanges: ObjectChanges): void {
+    objChanges.toArray().forEach(({ property, changes }) => {
+      this._props[property].applyChanges(changes);
     });
   }
 
-  getChanges(): IChanges {
-    const changes = new ChangesLog();
+  getChanges(): ObjectChanges {
+    const changes = new ObjectChanges();
 
-    this._propNames.forEach(prop => {
-      const serializableProp = this._props[prop];
+    this._propNames.forEach(property => {
+      const serializableProp = this._props[property];
 
       if (!serializableProp.changed) {
         return;
       }
 
       changes.add({
-        action: "changes",
-        params: {
-          prop,
-          changes: serializableProp.getChanges()
-        }
+        action: "change",
+        property,
+        changes: serializableProp.getChanges()
       });
     });
 
@@ -70,4 +57,4 @@ class SerializableObject implements IChangable {
   }
 }
 
-export { SerializableObject };
+export { ChangableObject };
