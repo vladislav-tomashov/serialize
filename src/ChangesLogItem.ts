@@ -1,7 +1,13 @@
-import { IChangesItem } from "./interfaces/IChangesItem";
+import { IChangeItem } from "./interfaces/IChangeItem";
 
-class ChangesLogItem implements IChangesItem {
-  constructor(private _action: string, private _params?: Object | undefined) {}
+class ChangesLogItem implements IChangeItem {
+  private _action: string;
+  private _params?: Object;
+
+  constructor({ action, params }: { action: string; params?: Object }) {
+    this._action = action;
+    this._params = params;
+  }
 
   get action() {
     return this._action;

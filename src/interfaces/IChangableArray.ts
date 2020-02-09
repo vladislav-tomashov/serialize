@@ -1,7 +1,9 @@
-import { ISerializableValue } from "./ISerializableValue";
+import { IChangableValue } from "./IChangableValue";
 
-export interface ISerializableArray<T> extends ISerializableValue<T[]> {
+export interface IChangableArray<T> extends IChangableValue<T[]> {
   set(index: number, value: T): void;
+
+  get(index: number): T | undefined;
 
   toArray(): T[];
 

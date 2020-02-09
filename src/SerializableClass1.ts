@@ -1,19 +1,19 @@
 import { Class1 } from "./Class1";
 
-import { ISerializableValue } from "./interfaces/ISerializableValue";
-import { SerializableValue } from "./SerializableValue";
-import { ISerializable } from "./interfaces/ISerializable";
+import { IChangableValue } from "./interfaces/IChangableValue";
+import { ChangableValue } from "./ChangableValue";
+import { IChangable } from "./interfaces/IChangable";
 import { IChanges } from "./interfaces/IChanges";
 import { SerializableObject } from "./SerializableObject";
 
-class SerializableClass1 extends Class1 implements ISerializable {
-  private _prop1: ISerializableValue<number>;
+class SerializableClass1 extends Class1 implements IChangable {
+  private _prop1: IChangableValue<number>;
   private _serializable: SerializableObject;
 
   constructor(prop1: number) {
     super(prop1);
 
-    this._prop1 = new SerializableValue<number>(super.prop1);
+    this._prop1 = new ChangableValue<number>(super.prop1);
   }
 
   get prop1() {
@@ -37,8 +37,8 @@ class SerializableClass1 extends Class1 implements ISerializable {
     this._prop1.clearChanges();
   }
 
-  setChanges(changes: IChanges): void {
-    this._prop1.setChanges(changes);
+  applyChanges(changes: IChanges): void {
+    this._prop1.applyChanges(changes);
     super.prop1 = this._prop1.value;
   }
 }

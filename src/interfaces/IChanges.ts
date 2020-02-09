@@ -1,15 +1,11 @@
-import { IChangesItem } from "./IChangesItem";
+import { IChangeItem } from "./IChangeItem";
 
 export interface IChanges {
   readonly empty: boolean;
 
-  toArray(): IChangesItem[];
+  toArray(): IChangeItem[];
 
-  add(item: IChangesItem): void;
+  add(item: IChangeItem): void;
 
   clear(): void;
-
-  toJSON(): any;
-
-  fromJSON(json: any): void;
 }

@@ -1,10 +1,10 @@
-import { ISerializableValue } from "./interfaces/ISerializableValue";
 import { IChanges } from "./interfaces/IChanges";
 import { ValueChanges } from "./ValueChanges";
+import { IChangableValue } from "./interfaces/IChangableValue";
 
 const defaultEqual = <T>(obj1: T, obj2: T) => obj1 === obj2;
 
-class SerializableValue<T> implements ISerializableValue<T> {
+class ChangableValue<T> implements IChangableValue<T> {
   private _changes = new ValueChanges();
 
   constructor(
@@ -36,16 +36,15 @@ class SerializableValue<T> implements ISerializableValue<T> {
     this._changes.clear();
   }
 
-  setChanges(changes: ValueChanges<T>): void {
+  applyChanges(changes: ValueChanges<T>): void {
     this.clearChanges();
 
     if (changes.empty) {
       return;
     }
 
-    const value = changes.getValue();
-    this._value = value;
+    this._value = changes.value as T;
   }
 }
 
-export { SerializableValue };
+export { ChangableValue };

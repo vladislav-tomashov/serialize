@@ -1,11 +1,11 @@
 import { IChanges } from "./IChanges";
 
-export interface ISerializable {
+export interface IChangable {
   readonly changed: boolean;
 
   getChanges(): IChanges;
 
   clearChanges(): void;
 
-  setChanges(changes: IChanges): void;
+  applyChanges(changes: IChanges): void;
 }

@@ -1,17 +1,17 @@
-import { SerializableArray } from "./SerializableArray";
+import { ChangableArray } from "./ChangableArray";
 import { SerializableObject } from "./SerializableObject";
-import { SerializableValue } from "./SerializableValue";
+import { ChangableValue } from "./ChangableValue";
 import { SerializableClass1 } from "./SerializableClass1";
 import { Class1 } from "./Class1";
 import { createSerializableClass } from "./createSerializable";
-import { SerializableType } from "./SerializableType";
+import { ChangableValueType } from "./ChangableValueType";
 
-const arr1 = new SerializableArray([1, 2, 3, 4]);
+const arr1 = new ChangableArray([1, 2, 3, 4]);
 const objVal = new SerializableObject({ prop1: 1, prop2: 2, arr1 });
 
-// const numberVal = new SerializableValue(5);
-// const prop1 = new SerializableValue("some string");
-// const prop2 = new SerializableValue(new Date());
+// const numberVal = new ChangableValue(5);
+// const prop1 = new ChangableValue("some string");
+// const prop2 = new ChangableValue(new Date());
 
 // const objVal = new SerializableObject({ prop1, prop2 });
 
@@ -32,14 +32,14 @@ const objVal = new SerializableObject({ prop1: 1, prop2: 2, arr1 });
 
 // console.log(JSON.stringify(obj.getChanges(), null, 4));
 
-// const arr2 = new SerializableArray(arr);
+// const arr2 = new ChangableArray(arr);
 // console.log(arr2.toArray());
 
 // arr2.applyChanges(arr1.changesLog);
 // console.log(arr2.toArray());
 
 const SerializableClass1 = createSerializableClass(Class1, {
-  prop1: SerializableType.Value
+  prop1: ChangableValueType.Value
 });
 
 const a = new SerializableClass1(5);

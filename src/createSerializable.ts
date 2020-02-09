@@ -1,30 +1,30 @@
-import { SerializableType } from "./SerializableType";
+import { ChangableValueType } from "./ChangableValueType";
 import { SerializableObject } from "./SerializableObject";
-import { SerializableValue } from "./SerializableValue";
-import { SerializableArray } from "./SerializableArray";
-import { ISerializable } from "./interfaces/ISerializable";
+import { ChangableValue } from "./ChangableValue";
+import { ChangableArray } from "./ChangableArray";
+import { IChangable } from "./interfaces/IChangable";
 import { IChanges } from "./interfaces/IChanges";
 
 const createSerializableClass = (
   classConstructor: Object,
-  serializableProps: Record<string, SerializableType>
+  serializableProps: Record<string, ChangableValueType>
 ): Object => {
-  return class extends classConstructor implements ISerializable {
+  return class extends classConstructor implements IChangable {
     private _serializable: SerializableObject;
 
     constructor(...args) {
       super(...args);
 
-      const props: Record<string, ISerializable> = {};
+      const props: Record<string, IChangable> = {};
 
       Object.keys(props).forEach(prop => {
-        const serializableType = serializableProps[prop];
+        const ChangableValueType = serializableProps[prop];
         const initialValue = super.prop;
 
         props[prop] =
-          serializableType === SerializableType.Value
-            ? new SerializableValue(initialValue)
-            : new SerializableArray(initialValue);
+          ChangableValueType === ChangableValueType.Value
+            ? new ChangableValue(initialValue)
+            : new ChangableArray(initialValue);
       });
 
       this._serializable = new SerializableObject(props);
@@ -42,8 +42,8 @@ const createSerializableClass = (
       this._serializable.clearChanges();
     }
 
-    setChanges(changes: IChanges): void {
-      throw new Error("Not implemented exception: setChanges()");
+    applyChanges(changes: IChanges): void {
+      throw new Error("Not implemented exception: applyChanges()");
     }
   };
 };

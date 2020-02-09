@@ -1,22 +1,22 @@
-import { ISerializableArray } from "./interfaces/ISerializableArray";
+import { IChangableArray } from "./interfaces/IChangableArray";
 import { IChanges } from "./interfaces/IChanges";
-import { ChangesLog } from "./ChangesLog";
+import { ArrayChanges } from "./ArrayChanges";
 
 const defaultEqual = <T>(obj1: T, obj2: T) => obj1 === obj2;
 
-class SerializableArray<T> implements ISerializableArray<T> {
+class ChangableArray<T> implements IChangableArray<T> {
   private _value: T[] = [];
 
   constructor(
     value: T[],
-    private _changesLog: IChanges = new ChangesLog(),
+    private _changes = new ArrayChanges<T>(),
     private _equal: (obj1: T, obj2: T) => boolean = defaultEqual
   ) {
     this._value = [...value];
   }
 
   get changed(): boolean {
-    return !this._changesLog.empty;
+    return !this._changes.empty;
   }
 
   get value() {
@@ -25,15 +25,15 @@ class SerializableArray<T> implements ISerializableArray<T> {
 
   set value(value: T[]) {
     this._value = value;
-    this._changesLog.add({ action: "set", params: { value } });
+    this._changes.add({ action: "set", value });
   }
 
   getChanges(): IChanges {
-    return this._changesLog;
+    return this._changes;
   }
 
-  toJSON(): T[] {
-    return this._value;
+  get(index: number): T | undefined {
+    return this._value[index];
   }
 
   set(index: number, value: T): void {
@@ -43,7 +43,7 @@ class SerializableArray<T> implements ISerializableArray<T> {
       return;
     }
 
-    this._changesLog.add({ action: "update", params: { index, value } });
+    this._changes.add({ action: "update", index, value });
   }
 
   toArray(): T[] {
@@ -52,19 +52,19 @@ class SerializableArray<T> implements ISerializableArray<T> {
 
   clear(): void {
     this._value = [];
-    this._changesLog.add({ action: "clear" });
+    this._changes.add({ action: "clear" });
   }
 
   push(value: T): void {
     this._value.push(value);
-    this._changesLog.add({ action: "push", params: { value } });
+    this._changes.add({ action: "push", value });
   }
 
   delete(index: number): T | undefined {
     const [result] = this._value.splice(index, 1);
 
     if (result !== undefined) {
-      this._changesLog.add({ action: "delete", params: { index } });
+      this._changes.add({ action: "delete", index });
     }
 
     return result;
@@ -74,7 +74,7 @@ class SerializableArray<T> implements ISerializableArray<T> {
     const result = this._value.pop();
 
     if (result !== undefined) {
-      this._changesLog.add({ action: "pop" });
+      this._changes.add({ action: "pop" });
     }
 
     return result;
@@ -82,53 +82,38 @@ class SerializableArray<T> implements ISerializableArray<T> {
 
   insert(index: number, value: T): void {
     this._value.splice(index, 0, value);
-    this._changesLog.add({ action: "insert", params: { index, value } });
+    this._changes.add({ action: "insert", index, value });
   }
 
   clearChanges(): void {
-    this._changesLog.clear();
+    this._changes.clear();
   }
 
-  setChanges(changesLog: IChanges) {
-    this._changesLog.clear();
+  applyChanges(changesLog: ArrayChanges<T>) {
+    this._changes.clear();
 
-    changesLog.toArray().forEach(({ action, params }) => {
+    changesLog.toArray().forEach(({ action, index, value }) => {
       switch (action) {
         case "clear":
           this._value = [];
           break;
         case "push":
-          {
-            const { value } = params;
-            this._value.push(value);
-          }
+          this._value.push(value as T);
           break;
         case "pop":
           this._value.pop();
           break;
         case "delete":
-          {
-            const { index } = params;
-            this._value.splice(index, 1);
-          }
+          this._value.splice(index as number, 1);
           break;
         case "insert":
-          {
-            const { index, value } = params;
-            this._value.splice(index, 0, value);
-          }
+          this._value.splice(index as number, 0, value as T);
           break;
         case "set":
-          {
-            const { value } = params;
-            this._value = value;
-          }
+          this._value = value as T[];
           break;
         case "update":
-          {
-            const { index, value } = params;
-            this._value[index] = value;
-          }
+          this._value[index as number] = value as T;
           break;
         default:
           break;
@@ -137,4 +122,4 @@ class SerializableArray<T> implements ISerializableArray<T> {
   }
 }
 
-export { SerializableArray };
+export { ChangableArray };

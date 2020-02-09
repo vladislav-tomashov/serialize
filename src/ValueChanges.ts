@@ -1,66 +1,63 @@
-import { IChangesItem } from "./interfaces/IChangesItem";
+import { IChangeItem } from "./interfaces/IChangeItem";
 import { IChanges } from "./interfaces/IChanges";
+import { IValueChangeItem } from "./interfaces/IValueChangeItem";
+import { ValueChangeItem } from "./ValueChangeItem";
 
 class ValueChanges<T> implements IChanges {
-  private _changed = false;
-  private _value: T = undefined;
+  constructor(private _change?: IValueChangeItem<T>) {}
 
   get empty(): boolean {
-    return !this._changed;
+    return !this._change;
   }
 
-  getValue(): T {
-    return this._value;
-  }
-
-  toArray(): IChangesItem[] {
-    return this._changed
-      ? [{ action: "change", params: { value: this._value } }]
-      : [];
-  }
-
-  update(value: T): void {
-    this._value = value;
-
-    if (!this._changed) {
-      this._changed = true;
-    }
-  }
-
-  add(change: IChangesItem): void {
-    const { action, params } = change;
-
-    if (action !== "change") {
-      throw new Error(
-        `Unsupported action=${action}. Only "change" action is supported.`
-      );
+  get value() {
+    if (this.empty) {
+      throw new Error("ValueChanges are empty!");
     }
 
-    this._changed = true;
-    this._value = params.value;
+    return this._change?.value;
   }
 
   clear(): void {
-    if (this._changed) {
-      this._changed = false;
+    if (this._change) {
+      this._change = undefined;
     }
+  }
+
+  toArray(): IChangeItem[] {
+    return this._change ? [this._change] : [];
+  }
+
+  update(value: T): void {
+    if (!this._change) {
+      this._change = new ValueChangeItem(value);
+    } else {
+      this._change.value = value;
+    }
+  }
+
+  add(change: IValueChangeItem<T>): void {
+    const { value } = change;
+
+    // if (action !== "change") {
+    //   throw new Error(
+    //     `Unsupported action=${action}. Only "change" action is supported.`
+    //   );
+    // }
+
+    // if (!params || !params.hasOwnProperty("value")) {
+    //   throw new Error("Value property is required in params object");
+    // }
+
+    this.update(value);
   }
 
   toJSON(): any {
-    if (!this._changed) {
+    if (this.empty) {
       return undefined;
     }
 
-    return { value: this._value };
-  }
-
-  fromJSON(json): void {
-    if (!json) {
-      this._changed = false;
-    }
-
-    this._changed = true;
-    this._value = json.value;
+    return this._change;
   }
 }
 

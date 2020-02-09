@@ -1,18 +1,18 @@
-import { IChangesItem } from "./interfaces/IChangesItem";
+import { IChangeItem } from "./interfaces/IChangeItem";
 import { IChanges } from "./interfaces/IChanges";
 
 class ChangesLog implements IChanges {
-  private _log: IChangesItem[] = [];
+  constructor(private _log: IChangeItem[] = []) {}
 
   get empty(): boolean {
     return this._log.length === 0;
   }
 
-  toArray(): IChangesItem[] {
+  toArray(): IChangeItem[] {
     return this._log;
   }
 
-  add(item: IChangesItem): void {
+  add(item: IChangeItem): void {
     if (item.action === "clear") {
       this.clear();
     }
@@ -26,12 +26,8 @@ class ChangesLog implements IChanges {
     }
   }
 
-  toJSON(): IChangesItem[] {
+  toJSON(): IChangeItem[] {
     return this._log;
-  }
-
-  fromJSON(json: IChangesItem[]): void {
-    this._log = json;
   }
 }
 
