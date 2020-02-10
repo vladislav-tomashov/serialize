@@ -4,19 +4,23 @@ class Class1 {
   private _prop1: number;
   private _prop2: OfArray<string>;
   private _prop3: Date;
+  private _prop4: Object;
 
   constructor({
     prop1,
     prop2,
-    prop3
+    prop3,
+    prop4
   }: {
     prop1: number;
     prop2: OfArray<string>;
     prop3: Date;
+    prop4: Object;
   }) {
     this.prop1 = prop1;
     this.prop2 = prop2;
     this.prop3 = prop3;
+    this.prop4 = prop4;
   }
 
   get prop1() {
@@ -41,6 +45,14 @@ class Class1 {
 
   set prop3(value: Date) {
     this._prop3 = value;
+  }
+
+  get prop4() {
+    return this._prop4;
+  }
+
+  set prop4(value: Object) {
+    this._prop4 = value;
   }
 }
 

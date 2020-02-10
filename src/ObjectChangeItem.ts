@@ -37,8 +37,8 @@ class ObjectChangeItem implements IObjectChangeItem {
 
   toJSON() {
     return {
-      changes: this.changes,
-      property: this.property
+      property: this.property,
+      changes: this.changes
     };
   }
 }
