@@ -1,33 +1,25 @@
 import { IChangable } from "./interfaces/IChangable";
 import { ObjectChanges } from "./ObjectChanges";
+import { IChangableValue } from "./interfaces/IChangableValue";
+import { ObjectChangeItem } from "./ObjectChangeItem";
 
 class ChangableObject implements IChangable {
-  private _props: Record<string, IChangable> = {};
-  private _propNames: Array<string> = [];
-
-  constructor(props: Record<string, any>) {
-    Object.keys(props).forEach(prop => {
-      const value = props[prop];
-      this._props[prop] = value;
-    });
-
-    this._propNames = Object.keys(this._props);
-  }
+  constructor(private _props: Record<string, IChangableValue<any>> = {}) {}
 
   get changed(): boolean {
-    return this._propNames.some(prop => this._props[prop].changed);
+    return this._getChangables().some(changable => changable.changed);
   }
 
-  // set(prop: string, value: any): void {
-  //   this._props[prop].value = value;
-  // }
+  set(prop: string, value: any): void {
+    this._props[prop].value = value;
+  }
 
-  // get(prop: string): any {
-  //   return this._props[prop].value;
-  // }
+  get(prop: string): any {
+    return this._props[prop].value;
+  }
 
   clearChanges(): void {
-    this._propNames.forEach(prop => this._props[prop].clearChanges());
+    this._getChangables().forEach(changable => changable.clearChanges());
   }
 
   applyChanges(objChanges: ObjectChanges): void {
@@ -39,21 +31,32 @@ class ChangableObject implements IChangable {
   getChanges(): ObjectChanges {
     const changes = new ObjectChanges();
 
-    this._propNames.forEach(property => {
-      const serializableProp = this._props[property];
+    this._getPropNames().forEach(property => {
+      const changable = this._props[property];
 
-      if (!serializableProp.changed) {
+      if (!changable.changed) {
         return;
       }
 
-      changes.add({
-        action: "change",
-        property,
-        changes: serializableProp.getChanges()
-      });
+      changes.add(
+        new ObjectChangeItem({
+          property,
+          changes: changable.getChanges()
+        })
+      );
     });
 
     return changes;
+  }
+
+  private _getPropNames(): Array<string> {
+    return Object.getOwnPropertyNames(this._props);
+  }
+
+  private _getChangables(): Array<IChangableValue<any>> {
+    return Object.getOwnPropertyNames(this._props).map(
+      prop => this._props[prop]
+    );
   }
 }
 

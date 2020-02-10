@@ -10,11 +10,11 @@ class ObjectChangeItem implements IObjectChangeItem {
   private _changes: IChanges;
 
   constructor({
-    action,
+    action = "change",
     property,
     changes
   }: {
-    action: ObjectAction;
+    action?: ObjectAction;
     property: string;
     changes: IChanges;
   }) {
@@ -38,8 +38,7 @@ class ObjectChangeItem implements IObjectChangeItem {
   toJSON() {
     return {
       changes: this.changes,
-      property: this.property,
-      action: this.action
+      property: this.property
     };
   }
 }

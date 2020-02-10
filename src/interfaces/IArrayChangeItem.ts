@@ -1,4 +1,5 @@
 import { IChangeItem } from "./IChangeItem";
+import { OfArray } from "../OfArray";
 
 export type ArrayAction =
   | "set"
@@ -11,6 +12,6 @@ export type ArrayAction =
 
 export interface IArrayChangeItem<T> extends IChangeItem {
   readonly action: ArrayAction;
-  readonly value?: T | T[];
+  readonly value?: T | OfArray<T>;
   readonly index?: number;
 }

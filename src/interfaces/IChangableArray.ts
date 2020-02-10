@@ -1,9 +1,12 @@
 import { IChangableValue } from "./IChangableValue";
+import { OfArray } from "../OfArray";
 
-export interface IChangableArray<T> extends IChangableValue<T[]> {
+export interface IChangableArray<T> extends IChangableValue<OfArray<T>> {
+  readonly length: number;
+
   set(index: number, value: T): void;
 
-  get(index: number): T | undefined;
+  get(index: number): T;
 
   toArray(): T[];
 

@@ -13,11 +13,12 @@ class ChangableValue<T> implements IChangableValue<T> {
   ) {}
 
   set value(value: T) {
-    if (!this._equal(this._value, value)) {
-      this._changes.update(value);
+    if (this._equal(this._value, value)) {
+      return;
     }
 
     this._value = value;
+    this._changes.update(this._value);
   }
 
   get value(): T {

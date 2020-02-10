@@ -38,17 +38,6 @@ class ValueChanges<T> implements IChanges {
 
   add(change: IValueChangeItem<T>): void {
     const { value } = change;
-
-    // if (action !== "change") {
-    //   throw new Error(
-    //     `Unsupported action=${action}. Only "change" action is supported.`
-    //   );
-    // }
-
-    // if (!params || !params.hasOwnProperty("value")) {
-    //   throw new Error("Value property is required in params object");
-    // }
-
     this.update(value);
   }
 
