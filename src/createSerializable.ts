@@ -5,27 +5,25 @@ import { IChangable } from "./interfaces/IChangable";
 import { ChangableObject } from "./SerializableObject";
 import { ObjectChanges } from "./ObjectChanges";
 import { IChangableValue } from "./interfaces/IChangableValue";
+import { Contractable } from "./Constructable";
 
 const createChangableClass = (
   classConstructor: Object,
   serializableProps: Record<string, ChangableValueType>
-): Object => {
+): Contractable => {
   const props: Record<string, IChangableValue<any>> = {};
   const descriptors: Record<string, any> = {};
 
   Object.getOwnPropertyNames(serializableProps).forEach(prop => {
     const changableType = serializableProps[prop];
-
-    const changable =
-      changableType === ChangableValueType.Value
-        ? new ChangableValue()
-        : new ChangableArray();
+    const isArray = changableType === ChangableValueType.Array;
+    const changable = isArray ? new ChangableArray() : new ChangableValue();
 
     props[prop] = changable;
 
     const descriptor = {
       get: function() {
-        return changable.value;
+        return isArray ? changable : changable.value;
       },
       set: function(newValue: any) {
         changable.value = newValue;

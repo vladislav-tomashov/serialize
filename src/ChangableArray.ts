@@ -57,7 +57,6 @@ class ChangableArray<T> implements IChangableArray<T> {
   }
 
   push(value: T): void {
-    console.log("push", value);
     this._value.push(value);
     this._changes.add({ action: "push", value });
   }
