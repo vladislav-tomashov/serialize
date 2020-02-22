@@ -4,12 +4,12 @@ import { ArrayChanges } from "./ArrayChanges";
 import { OfArray } from "./OfArray";
 
 const defaultEqual = <T>(obj1: T, obj2: T) => obj1 === obj2;
+const equal = defaultEqual;
 
 class ChangableArray<T> implements IChangableArray<T> {
   constructor(
     private _value = new OfArray<T>(),
-    private _changes = new ArrayChanges<T>(),
-    private _equal: (obj1: T, obj2: T) => boolean = defaultEqual
+    private _changes = new ArrayChanges<T>()
   ) {}
 
   get length(): number {
@@ -40,7 +40,7 @@ class ChangableArray<T> implements IChangableArray<T> {
   set(index: number, value: T): void {
     this._value.set(index, value);
 
-    if (this._equal(this._value.get(index), value)) {
+    if (equal(this._value.get(index), value)) {
       return;
     }
 

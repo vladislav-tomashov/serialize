@@ -3,22 +3,20 @@ import { ValueChanges } from "./ValueChanges";
 import { IChangableValue } from "./interfaces/IChangableValue";
 
 const defaultEqual = <T>(obj1: T, obj2: T) => obj1 === obj2;
+const equal = defaultEqual;
 
 class ChangableValue<T> implements IChangableValue<T> {
-  private _changes = new ValueChanges();
+  private _changed = false;
 
-  constructor(
-    private _value: T,
-    private _equal: (obj1: T, obj2: T) => boolean = defaultEqual
-  ) {}
+  constructor(private _value: T = undefined) {}
 
   set value(value: T) {
-    if (this._equal(this._value, value)) {
+    if (equal(this._value, value)) {
       return;
     }
 
     this._value = value;
-    this._changes.update(this._value);
+    this._changed = true;
   }
 
   get value(): T {
@@ -26,15 +24,15 @@ class ChangableValue<T> implements IChangableValue<T> {
   }
 
   get changed(): boolean {
-    return !this._changes.empty;
+    return this._changed;
   }
 
-  getChanges(): IChanges {
+  getChanges(): ValueChanges<T> {
     return this._changes;
   }
 
   clearChanges(): void {
-    this._changes.clear();
+    this._changed = false;
   }
 
   applyChanges(changes: ValueChanges<T>): void {

@@ -2,7 +2,7 @@ import { ChangableValueType } from "./ChangableValueType";
 import { ChangableValue } from "./ChangableValue";
 import { ChangableArray } from "./ChangableArray";
 import { IChangable } from "./interfaces/IChangable";
-import { ChangableObject } from "./SerializableObject";
+import { ChangableObject } from "./ChangableObject";
 import { ObjectChanges } from "./ObjectChanges";
 import { IChangableValue } from "./interfaces/IChangableValue";
 import { Contractable } from "./Constructable";

@@ -20,7 +20,7 @@ class ArrayChanges<T> implements IChanges {
   }
 
   add(change: IArrayChangeItem<T>): void {
-    console.log("ArrayChanges:", JSON.stringify(change));
+    // console.log("ArrayChanges:", JSON.stringify(change));
 
     if (change.action === "clear" || change.action === "set") {
       this.clear();

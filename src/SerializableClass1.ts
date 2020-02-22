@@ -1,4 +1,4 @@
-import { createChangableClass } from "./createSerializable";
+import { createChangableClass } from "./createChangableClass";
 import { Class1 } from "./Class1";
 import { ChangableValueType } from "./ChangableValueType";
 
