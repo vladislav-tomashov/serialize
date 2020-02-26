@@ -1,5 +1,4 @@
-import { IChanges } from "./interfaces/IChanges";
-import { ValueChanges } from "./ValueChanges";
+import { ValueChange } from "./ValueChange";
 import { IChangableValue } from "./interfaces/IChangableValue";
 
 const defaultEqual = <T>(obj1: T, obj2: T) => obj1 === obj2;
@@ -7,8 +6,9 @@ const equal = defaultEqual;
 
 class ChangableValue<T> implements IChangableValue<T> {
   private _changed = false;
+  private _changes: ValueChange<T> | undefined;
 
-  constructor(private _value: T = undefined) {}
+  constructor(private _value: T) {}
 
   set value(value: T) {
     if (equal(this._value, value)) {
@@ -16,7 +16,10 @@ class ChangableValue<T> implements IChangableValue<T> {
     }
 
     this._value = value;
-    this._changed = true;
+
+    if (!this._changed) {
+      this._changed = true;
+    }
   }
 
   get value(): T {
@@ -27,22 +30,35 @@ class ChangableValue<T> implements IChangableValue<T> {
     return this._changed;
   }
 
-  getChanges(): ValueChanges<T> {
+  getChanges(): ValueChange<T> {
+    if (!this._changed) {
+      return {} as ValueChange<T>;
+    }
+
+    if (!this._changes) {
+      this._changes = new ValueChange(this._value);
+    }
+
     return this._changes;
   }
 
   clearChanges(): void {
-    this._changed = false;
-  }
-
-  applyChanges(changes: ValueChanges<T>): void {
-    this.clearChanges();
-
-    if (changes.empty) {
+    if (!this._changed) {
       return;
     }
 
-    this._value = changes.value as T;
+    this._changed = false;
+    this._changes = undefined;
+  }
+
+  applyChanges(changes: ValueChange<T>): void {
+    this.clearChanges();
+
+    if (!changes.hasChanges) {
+      return;
+    }
+
+    this._value = changes.value;
   }
 }
 

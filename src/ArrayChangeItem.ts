@@ -1,10 +1,9 @@
 import { IArrayChangeItem, ArrayAction } from "./interfaces/IArrayChangeItem";
-import { OfArray } from "./OfArray";
 
 class ArrayChangeItem<T> implements IArrayChangeItem<T> {
   private _action: ArrayAction;
   private _index?: number;
-  private _value?: T | OfArray<T>;
+  private _value?: T;
 
   constructor({
     action,
@@ -13,7 +12,7 @@ class ArrayChangeItem<T> implements IArrayChangeItem<T> {
   }: {
     action: ArrayAction;
     index?: number;
-    value?: T | OfArray<T>;
+    value?: T;
   }) {
     this._action = action;
     this._index = index;
@@ -33,7 +32,7 @@ class ArrayChangeItem<T> implements IArrayChangeItem<T> {
   }
 
   toJSON() {
-    return { value: this.value, index: this.index, action: this.action };
+    return { index: this.index, action: this.action, value: this._value };
   }
 }
 
