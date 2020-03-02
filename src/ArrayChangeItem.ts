@@ -33,7 +33,17 @@ class ArrayChangeItem<T> implements IArrayChangeItem<T> {
   }
 
   toJSON() {
-    return { value: this.value, index: this.index, action: this.action };
+    let result = { value: this.value };
+
+    if (this.index !== undefined) {
+      result = { ...result, index: this.index };
+    }
+
+    if (this.value !== undefined) {
+      result = { ...result, value: this.value };
+    }
+
+    return result;
   }
 }
 

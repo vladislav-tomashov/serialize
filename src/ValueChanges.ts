@@ -7,7 +7,7 @@ class ValueChanges<T> implements IChanges {
   constructor(private _change?: IValueChangeItem<T>) {}
 
   get empty(): boolean {
-    return !this._change;
+    return Boolean(this._change);
   }
 
   get value() {

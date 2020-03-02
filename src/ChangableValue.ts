@@ -1,4 +1,3 @@
-import { IChanges } from "./interfaces/IChanges";
 import { ValueChanges } from "./ValueChanges";
 import { IChangableValue } from "./interfaces/IChangableValue";
 
