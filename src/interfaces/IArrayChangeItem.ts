@@ -1,17 +1,16 @@
-import { IChangeItem } from "./IChangeItem";
-import { OfArray } from "../OfArray";
+import { IChanges } from "./IChanges";
 
 export type ArrayAction =
-  | "set"
   | "clear"
   | "push"
   | "pop"
   | "delete"
-  | "update"
-  | "insert";
+  | "insert"
+  | "update";
 
-export interface IArrayChangeItem<T> extends IChangeItem {
+export interface IArrayChangeItem<T> {
   readonly action: ArrayAction;
-  readonly value?: T | OfArray<T>;
   readonly index?: number;
+  readonly value?: T;
+  readonly changes?: IChanges;
 }

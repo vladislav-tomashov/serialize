@@ -1,24 +1,173 @@
-class OfArray<T> {
+import { IArray } from "./interfaces/IArray";
+
+class OfArray<T> implements IArray<T> {
   constructor(private _array: Array<T> = []) {}
 
   get length() {
     return this._array.length;
   }
 
-  toArray() {
-    return [...this._array];
+  toString(): string {
+    return this._array.toString();
   }
 
-  get(index: number): T {
+  push(...items: T[]): number {
+    return this._array.push(...items);
+  }
+
+  concat(...items: ConcatArray<T>[]): T[];
+  concat(...items: (T | ConcatArray<T>)[]): T[];
+  concat(...items: any[]) {
+    return this._array.concat(...items);
+  }
+
+  join(separator?: string | undefined): string {
+    return this._array.join(separator);
+  }
+
+  reverse(): T[] {
+    return this._array.reverse();
+  }
+
+  shift(): T | undefined {
+    return this._array.shift();
+  }
+
+  slice(start?: number | undefined, end?: number | undefined): T[] {
+    return this._array.slice(start, end);
+  }
+
+  sort(compareFn?: ((a: T, b: T) => number) | undefined): this {
+    this._array.sort(compareFn);
+    return this;
+  }
+
+  splice(start: number, deleteCount?: number | undefined): T[];
+  splice(start: number, deleteCount: number, ...items: T[]): T[];
+  splice(start: any, deleteCount?: any, ...rest: any[]) {
+    return this._array.splice(start, deleteCount, ...rest);
+  }
+
+  unshift(...items: T[]): number {
+    return this._array.unshift(...items);
+  }
+
+  indexOf(searchElement: T, fromIndex?: number | undefined): number {
+    return this._array.indexOf(searchElement, fromIndex);
+  }
+
+  lastIndexOf(searchElement: T, fromIndex?: number | undefined): number {
+    return this._array.lastIndexOf(searchElement, fromIndex);
+  }
+
+  every(
+    callbackfn: (value: T, index: number, array: T[]) => unknown,
+    thisArg?: any
+  ): boolean {
+    return this._array.every(callbackfn);
+  }
+
+  some(
+    callbackfn: (value: T, index: number, array: T[]) => unknown,
+    thisArg?: any
+  ): boolean {
+    return this._array.some(callbackfn);
+  }
+
+  forEach(
+    callbackfn: (value: T, index: number, array: T[]) => void,
+    thisArg?: any
+  ): void {
+    return this._array.forEach(callbackfn);
+  }
+
+  map<U>(
+    callbackfn: (value: T, index: number, array: T[]) => U,
+    thisArg?: any
+  ): U[] {
+    return this._array.map(callbackfn);
+  }
+
+  filter<S extends T>(
+    callbackfn: (value: T, index: number, array: T[]) => value is S,
+    thisArg?: any
+  ): S[];
+  filter(
+    callbackfn: (value: T, index: number, array: T[]) => unknown,
+    thisArg?: any
+  ): T[];
+  filter(callbackfn: any, thisArg?: any) {
+    return this._array.filter(callbackfn);
+  }
+  reduce(
+    callbackfn: (
+      previousValue: T,
+      currentValue: T,
+      currentIndex: number,
+      array: T[]
+    ) => T
+  ): T;
+  reduce(
+    callbackfn: (
+      previousValue: T,
+      currentValue: T,
+      currentIndex: number,
+      array: T[]
+    ) => T,
+    initialValue: T
+  ): T;
+  reduce<U>(
+    callbackfn: (
+      previousValue: U,
+      currentValue: T,
+      currentIndex: number,
+      array: T[]
+    ) => U,
+    initialValue: U
+  ): U;
+  reduce(callbackfn: any, initialValue?: any) {
+    return this._array.reduce(callbackfn);
+  }
+  reduceRight(
+    callbackfn: (
+      previousValue: T,
+      currentValue: T,
+      currentIndex: number,
+      array: T[]
+    ) => T
+  ): T;
+  reduceRight(
+    callbackfn: (
+      previousValue: T,
+      currentValue: T,
+      currentIndex: number,
+      array: T[]
+    ) => T,
+    initialValue: T
+  ): T;
+  reduceRight<U>(
+    callbackfn: (
+      previousValue: U,
+      currentValue: T,
+      currentIndex: number,
+      array: T[]
+    ) => U,
+    initialValue: U
+  ): U;
+  reduceRight(callbackfn: any, initialValue?: any) {
+    return this._array.reduceRight(callbackfn);
+  }
+
+  toArray() {
+    return this._array;
+  }
+
+  get(index: number): T | undefined {
     return this._array[index];
   }
 
   set(index: number, value: T) {
     this._array[index] = value;
-  }
-
-  push(value: T) {
-    this._array.push(value);
   }
 
   pop(): T | undefined {
@@ -27,78 +176,6 @@ class OfArray<T> {
 
   clear() {
     this._array.length = 0;
-  }
-
-  concat(...args) {
-    return this._array.concat(...args);
-  }
-
-  indexOf(...args) {
-    return this._array.indexOf(...args);
-  }
-
-  sort(...args) {
-    return this._array.sort(...args);
-  }
-
-  reverse(...args) {
-    return this._array.reverse(...args);
-  }
-
-  unshift(...args) {
-    return this._array.unshift(...args);
-  }
-
-  shift(...args) {
-    return this._array.shift(...args);
-  }
-
-  map(...args) {
-    return this._array.map(...args);
-  }
-
-  reduce(...args) {
-    return this._array.reduce(...args);
-  }
-
-  reduceRight(...args) {
-    return this._array.reduceRight(...args);
-  }
-
-  lastIndexOf(...args) {
-    return this._array.lastIndexOf(...args);
-  }
-
-  join(...args) {
-    return this._array.join(...args);
-  }
-
-  filter(...args) {
-    return this._array.filter(...args);
-  }
-
-  every(...args) {
-    return this._array.every(...args);
-  }
-
-  some(...args) {
-    return this._array.some(...args);
-  }
-
-  forEach(...args) {
-    return this._array.forEach(...args);
-  }
-
-  slice(...args) {
-    return this._array.slice(...args);
-  }
-
-  splice(...args) {
-    return this._array.splice(...args);
-  }
-
-  toString(...args) {
-    return this._array.toString(...args);
   }
 
   toJSON() {
