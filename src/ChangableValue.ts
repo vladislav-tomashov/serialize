@@ -1,12 +1,19 @@
-import { ValueChange } from "./ValueChange";
 import { IChangableValue } from "./interfaces/IChangableValue";
+import { toChangable } from "./interfaces/IChangable";
+import { IValueChange } from "./interfaces/IValueChange";
+import { IChanges } from "./interfaces/IChanges";
+import { ValueChange2 } from "./ValueChange2";
 
 const defaultEqual = <T>(obj1: T, obj2: T) => obj1 === obj2;
 const equal = defaultEqual;
 
 class ChangableValue<T> implements IChangableValue<T> {
   private _changed = false;
-  private _changes: ValueChange<T> | undefined;
+  private _changes?: ValueChange2<T>;
+
+  private get valueAsChangable() {
+    return toChangable(this._value);
+  }
 
   constructor(private _value: T) {}
 
@@ -27,38 +34,51 @@ class ChangableValue<T> implements IChangableValue<T> {
   }
 
   get changed(): boolean {
-    return this._changed;
+    return this._changed || Boolean(this.valueAsChangable?.changed);
   }
 
-  getChanges(): ValueChange<T> {
-    if (!this._changed) {
-      return {} as ValueChange<T>;
-    }
+  getChanges(): IValueChange<T> {
+    if (this._changes === undefined) {
+      const getOwnChanges = () => {
+        return { changed: this._changed, value: this._value };
+      };
 
-    if (!this._changes) {
-      this._changes = new ValueChange(this._value);
+      const getChildChanges = () => {
+        return this.valueAsChangable?.getChanges();
+      };
+
+      this._changes = new ValueChange2<T>(getOwnChanges, getChildChanges);
     }
 
     return this._changes;
   }
 
   clearChanges(): void {
-    if (!this._changed) {
-      return;
-    }
-
     this._changed = false;
     this._changes = undefined;
   }
 
-  applyChanges(changes: ValueChange<T>): void {
+  applyChanges(changes: IValueChange<T>): void {
     this.clearChanges();
 
-    if (!changes.hasChanges) {
+    const { action, value, valueChanges, hasChanges } = changes;
+
+    if (!hasChanges) {
       return;
     }
 
-    this._value = changes.value;
+    switch (action) {
+      case "set": {
+        this._value = value as T;
+      }
+      case "update": {
+        this.valueAsChangable?.applyChanges(valueChanges as IChanges);
+      }
+      default:
+        throw new Error(
+          `Unknown action="${action}"! Should be of type ValueChangeAction`
+        );
+    }
   }
 }
 
