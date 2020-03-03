@@ -1,27 +1,28 @@
 import { IChangableArray } from "./interfaces/IChangableArray";
 import { ArrayChanges } from "./ArrayChanges";
 import { OfArray } from "./OfArray";
-import { IChangableValue } from "./interfaces/IChangableValue";
 import { IArrayChangeItem } from "./interfaces/IArrayChangeItem";
+import { toChangable } from "./interfaces/IChangable";
 
 const defaultEqual = <T>(obj1: T, obj2: T) => obj1 === obj2;
 const equal = defaultEqual;
 
-class ChangableArray<T, T1 extends IChangableValue<T>>
-  implements IChangableArray<T> {
-  private _changes = new ArrayChanges<T>();
+class ChangableArray<T> implements IChangableArray<T> {
+  private _changes?: ArrayChanges2<T>;
+  private _changed = false;
 
-  constructor(private _array = new OfArray<T1>()) {}
+  constructor(private _array = new OfArray<T>()) {}
 
   get length(): number {
     return this._array.length;
   }
 
   get changed(): boolean {
-    return this._changes.hasChanges || this._array.some(el => el.changed);
+    return this._changed || this._array.some(el => toChangable(el)?.changed);
   }
 
-  getChanges(): ArrayChanges<T> {
+  getChanges(): IArrayChanges<T> {
+    // private _changes?: ArrayChanges2; // = new ArrayChanges2<T>(() => this._array);
     const changes: IArrayChangeItem<T>[] = [];
 
     this._array.forEach((x, index) => {

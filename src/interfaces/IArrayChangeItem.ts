@@ -6,7 +6,8 @@ export type ArrayAction =
   | "pop"
   | "delete"
   | "insert"
-  | "update";
+  | "set"
+  | "childChanges";
 
 export interface IArrayChangeItem<T> {
   readonly action: ArrayAction;

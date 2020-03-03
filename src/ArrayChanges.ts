@@ -1,7 +1,7 @@
-import { IChanges } from "./interfaces/IChanges";
 import { IArrayChangeItem } from "./interfaces/IArrayChangeItem";
+import { IArrayChanges } from "./interfaces/IArrayChanges";
 
-class ArrayChanges<T> implements IChanges {
+class ArrayChanges<T> implements IArrayChanges<T {
   constructor(private _changes: IArrayChangeItem<T>[] = []) {}
 
   get hasChanges(): boolean {
@@ -12,13 +12,9 @@ class ArrayChanges<T> implements IChanges {
     return this._changes;
   }
 
-  clear(): void {
-    this._changes = [];
-  }
-
   add(change: IArrayChangeItem<T>): void {
     if (change.action === "clear") {
-      this.clear();
+      this._changes = [];
       return;
     }
 
