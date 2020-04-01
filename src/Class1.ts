@@ -1,8 +1,8 @@
-import { OfArray } from "./OfArray";
+import { ArrayAnalog } from "./ArrayAnalog";
 
 class Class1 {
   private _prop1: number;
-  private _prop2: OfArray<string>;
+  private _prop2: ArrayAnalog<string>;
   private _prop3: Date;
   private _prop4: Object;
 
@@ -13,7 +13,7 @@ class Class1 {
     prop4
   }: {
     prop1: number;
-    prop2: OfArray<string>;
+    prop2: ArrayAnalog<string>;
     prop3: Date;
     prop4: Object;
   }) {
@@ -35,7 +35,7 @@ class Class1 {
     return this._prop2;
   }
 
-  set prop2(value: OfArray<string>) {
+  set prop2(value: ArrayAnalog<string>) {
     this._prop2 = value;
   }
 

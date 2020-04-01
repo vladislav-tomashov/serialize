@@ -1,11 +1,11 @@
 import { SerializableClass1 } from "./SerializableClass1";
-import { OfArray } from "./OfArray";
+import { ArrayAnalog } from "./ArrayAnalog";
 
 // console.log(12345);
 
 const a = new SerializableClass1({
   prop1: 1,
-  prop2: new OfArray(["abc", "def"]),
+  prop2: new ArrayAnalog(["abc", "def"]),
   prop3: new Date(),
   prop4: { a: 1, b: "jdfjbfjb" }
 });

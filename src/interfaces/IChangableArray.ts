@@ -1,4 +1,4 @@
-import { OfArray } from "../OfArray";
+import { ArrayAnalog } from "../ArrayAnalog";
 import { IChangable } from "./IChangable";
 
-export interface IChangableArray<T> extends IChangable, OfArray<T> {}
+export interface IChangableArray<T> extends IChangable, ArrayAnalog<T> {}

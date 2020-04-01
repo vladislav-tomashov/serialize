@@ -1,93 +1,124 @@
-import { IArray } from "./interfaces/IArray";
+import { IArray } from "../ArrayAnalog/IArray";
+import { IChangable } from "./interfaces/IChangable";
+import { ArrayAnalog } from "../ArrayAnalog/ArrayAnalog";
 
-class OfArray<T> implements IArray<T> {
-  constructor(private _array: Array<T> = []) {}
+export class ChangableArray<T> implements IArray<T>, IChangable<IArray<T>> {
+  private _array: ArrayAnalog<T>;
 
-  get length() {
+  isChangable: true = true;
+
+  constructor(value: T[]);
+  constructor(value: IArray<T>);
+  constructor(value: IArray<T> | T[]) {
+    const valueAsIArray = value as IArray<T>;
+    const array = valueAsIArray.toArray
+      ? valueAsIArray.toArray()
+      : (value as T[]);
+
+    this._array = new ArrayAnalog(array);
+  }
+
+  get changed(): boolean {}
+
+  getChanges(): import("./types").TChanges<IArray<T>> {
+    throw new Error("Method not implemented.");
+  }
+  setChanges(changes: import("./types").TChanges<IArray<T>>): void {
+    throw new Error("Method not implemented.");
+  }
+  clearChanges(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  get length(): number {
     return this._array.length;
+  }
+
+  toArray(): T[] {
+    return this._array.toArray();
+  }
+
+  get(index: number): T | undefined {
+    return this._array.get(index);
+  }
+
+  set(index: number, value: T): void {
+    this._array.set(index, value);
+    this._changes.registerSet(index, value);
   }
 
   toString(): string {
     return this._array.toString();
   }
 
+  pop(): T | undefined {
+    const result = this._array.pop();
+    this._changes.registerPop();
+    return result;
+  }
+
   push(...items: T[]): number {
-    return this._array.push(...items);
+    throw new Error("Method not implemented.");
   }
 
   concat(...items: ConcatArray<T>[]): T[];
   concat(...items: (T | ConcatArray<T>)[]): T[];
   concat(...items: any[]) {
-    return this._array.concat(...items);
+    throw new Error("Method not implemented.");
   }
-
   join(separator?: string | undefined): string {
-    return this._array.join(separator);
+    throw new Error("Method not implemented.");
   }
-
   reverse(): T[] {
-    return this._array.reverse();
+    throw new Error("Method not implemented.");
   }
-
   shift(): T | undefined {
-    return this._array.shift();
+    throw new Error("Method not implemented.");
   }
-
   slice(start?: number | undefined, end?: number | undefined): T[] {
-    return this._array.slice(start, end);
+    throw new Error("Method not implemented.");
   }
-
   sort(compareFn?: ((a: T, b: T) => number) | undefined): this {
-    this._array.sort(compareFn);
-    return this;
+    throw new Error("Method not implemented.");
   }
-
   splice(start: number, deleteCount?: number | undefined): T[];
   splice(start: number, deleteCount: number, ...items: T[]): T[];
   splice(start: any, deleteCount?: any, ...rest: any[]) {
-    return this._array.splice(start, deleteCount, ...rest);
+    throw new Error("Method not implemented.");
   }
-
   unshift(...items: T[]): number {
-    return this._array.unshift(...items);
+    throw new Error("Method not implemented.");
   }
-
   indexOf(searchElement: T, fromIndex?: number | undefined): number {
-    return this._array.indexOf(searchElement, fromIndex);
+    throw new Error("Method not implemented.");
   }
-
   lastIndexOf(searchElement: T, fromIndex?: number | undefined): number {
-    return this._array.lastIndexOf(searchElement, fromIndex);
+    throw new Error("Method not implemented.");
   }
-
   every(
     callbackfn: (value: T, index: number, array: T[]) => unknown,
     thisArg?: any
   ): boolean {
-    return this._array.every(callbackfn);
+    throw new Error("Method not implemented.");
   }
-
   some(
     callbackfn: (value: T, index: number, array: T[]) => unknown,
     thisArg?: any
   ): boolean {
-    return this._array.some(callbackfn);
+    throw new Error("Method not implemented.");
   }
-
   forEach(
     callbackfn: (value: T, index: number, array: T[]) => void,
     thisArg?: any
   ): void {
-    return this._array.forEach(callbackfn);
+    throw new Error("Method not implemented.");
   }
-
   map<U>(
     callbackfn: (value: T, index: number, array: T[]) => U,
     thisArg?: any
   ): U[] {
-    return this._array.map(callbackfn);
+    throw new Error("Method not implemented.");
   }
-
   filter<S extends T>(
     callbackfn: (value: T, index: number, array: T[]) => value is S,
     thisArg?: any
@@ -97,7 +128,7 @@ class OfArray<T> implements IArray<T> {
     thisArg?: any
   ): T[];
   filter(callbackfn: any, thisArg?: any) {
-    return this._array.filter(callbackfn);
+    throw new Error("Method not implemented.");
   }
   reduce(
     callbackfn: (
@@ -126,7 +157,7 @@ class OfArray<T> implements IArray<T> {
     initialValue: U
   ): U;
   reduce(callbackfn: any, initialValue?: any) {
-    return this._array.reduce(callbackfn);
+    throw new Error("Method not implemented.");
   }
   reduceRight(
     callbackfn: (
@@ -155,32 +186,6 @@ class OfArray<T> implements IArray<T> {
     initialValue: U
   ): U;
   reduceRight(callbackfn: any, initialValue?: any) {
-    return this._array.reduceRight(callbackfn);
-  }
-
-  toArray() {
-    return this._array;
-  }
-
-  get(index: number): T | undefined {
-    return this._array[index];
-  }
-
-  set(index: number, value: T) {
-    this._array[index] = value;
-  }
-
-  pop(): T | undefined {
-    return this._array.pop();
-  }
-
-  clear() {
-    this._array.length = 0;
-  }
-
-  toJSON() {
-    return this._array;
+    throw new Error("Method not implemented.");
   }
 }
-
-export { OfArray };

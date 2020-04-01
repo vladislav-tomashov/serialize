@@ -1,6 +1,6 @@
 import { IChangableArray } from "./interfaces/IChangableArray";
 import { ArrayChanges } from "./ArrayChanges";
-import { OfArray } from "./OfArray";
+import { ArrayAnalog } from "./ArrayAnalog";
 import { IArrayChangeItem } from "./interfaces/IArrayChangeItem";
 import { toChangable } from "./interfaces/IChangable";
 
@@ -11,14 +11,14 @@ class ChangableArray<T> implements IChangableArray<T> {
   private _changes?: ArrayChanges2<T>;
   private _changed = false;
 
-  constructor(private _array = new OfArray<T>()) {}
+  constructor(private _array = new ArrayAnalog<T>()) {}
 
   get length(): number {
     return this._array.length;
   }
 
   get changed(): boolean {
-    return this._changed || this._array.some(el => toChangable(el)?.changed);
+    return this._changed || this._array.some((el) => toChangable(el)?.changed);
   }
 
   getChanges(): IArrayChanges<T> {
@@ -41,7 +41,7 @@ class ChangableArray<T> implements IChangableArray<T> {
   }
 
   toArray(): T[] {
-    return this._array.map(x => x.value);
+    return this._array.map((x) => x.value);
   }
 
   toChangableArray(): T1[] {
@@ -75,7 +75,7 @@ class ChangableArray<T> implements IChangableArray<T> {
   }
 
   push(...items: T[]): number {
-    items.forEach(item => {
+    items.forEach((item) => {
       this._array.push();
       this._changes.add({ action: "push", value });
     });
@@ -190,7 +190,7 @@ class ChangableArray<T> implements IChangableArray<T> {
           this._array.splice(index as number, 0, value as T);
           break;
         case "constructor":
-          this._array = value as OfArray<T>;
+          this._array = value as ArrayAnalog<T>;
           break;
         case "update":
           this._array.set(index as number, value as T);
