@@ -223,4 +223,6 @@ export interface IArray<T> {
   get(index: number): T | undefined;
 
   set(index: number, value: T): void;
+
+  clear(): void;
 }
