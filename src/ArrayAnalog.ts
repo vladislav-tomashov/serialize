@@ -1,6 +1,6 @@
-import { IArray } from "./interfaces/IArray";
+import { ICollection } from "./interfaces/ICollection";
 
-class ArrayAnalog<T> implements IArray<T> {
+class Collection<T> implements ICollection<T> {
   constructor(private _array: Array<T> = []) {}
 
   get length() {
@@ -183,4 +183,4 @@ class ArrayAnalog<T> implements IArray<T> {
   }
 }
 
-export { ArrayAnalog };
+export { Collection };

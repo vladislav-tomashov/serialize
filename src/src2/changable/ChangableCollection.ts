@@ -1,35 +1,36 @@
-import { IArray } from "../ArrayAnalog/IArray";
+import { ICollection } from "../Collection/ICollection";
 import { IChangable } from "./interfaces/IChangable";
-import { ArrayAnalog } from "../ArrayAnalog/ArrayAnalog";
+import { Collection } from "../Collection/Collection";
 import {
   TChanges,
-  TArrayChange,
-  ArrayChangeType,
-  TArrayPushChange,
-  TArrayUnshiftChange,
-  TArrayClearChange,
-  TArraySortChange,
-  TArrayReverseChange,
-  TArraySetChange
+  TCollectionChange,
+  CollectionChangeType,
+  TCollectionPushChange,
+  TCollectionUnshiftChange,
+  TCollectionClearChange,
+  TCollectionSortChange,
+  TCollectionReverseChange,
+  TCollectionSetChange,
+  TCollectionSpliceChange
 } from "./types";
-import { ArrayChanges } from "./ArrayChanges";
+import { CollectionChanges } from "./CollectionChanges";
 
-export class ChangableArray<T> implements IArray<T>, IChangable<T> {
-  private _array: ArrayAnalog<T>;
-  private _changes = new ArrayChanges<T>();
+export class ChangableCollection<T> implements ICollection<T>, IChangable<T> {
+  private _array: Collection<T>;
+  private _changes = new CollectionChanges<T>();
   private _disableChanges = false;
 
   isChangable: true = true;
 
   constructor(value: T[]);
-  constructor(value: IArray<T>);
-  constructor(value: IArray<T> | T[]) {
-    const valueAsIArray = value as IArray<T>;
+  constructor(value: ICollection<T>);
+  constructor(value: ICollection<T> | T[]) {
+    const valueAsIArray = value as ICollection<T>;
     const array = valueAsIArray.toArray
       ? valueAsIArray.toArray()
       : (value as T[]);
 
-    this._array = new ArrayAnalog(array);
+    this._array = new Collection(array);
   }
 
   get changed(): boolean {
@@ -41,48 +42,59 @@ export class ChangableArray<T> implements IArray<T>, IChangable<T> {
     return result;
   }
 
-  private _setChange(change: TArrayChange<T>) {
+  private _setChange(change: TCollectionChange<T>) {
     const [changeType] = change;
 
     switch (changeType) {
-      case ArrayChangeType.Push: {
-        const [, items] = change as TArrayPushChange<T>;
+      case CollectionChangeType.Splice: {
+        const [, start, deleteCount, items] = change as TCollectionSpliceChange<
+          T
+        >;
+        if (deleteCount && items) {
+          this._array.splice(start, deleteCount, ...items);
+        } else {
+          this._array.splice(start, deleteCount);
+        }
+        break;
+      }
+      case CollectionChangeType.Push: {
+        const [, items] = change as TCollectionPushChange<T>;
         this._array.push(...items);
         break;
       }
-      case ArrayChangeType.Unshift: {
-        const [, items] = change as TArrayUnshiftChange<T>;
+      case CollectionChangeType.Unshift: {
+        const [, items] = change as TCollectionUnshiftChange<T>;
         this._array.unshift(...items);
         break;
       }
-      case ArrayChangeType.Pop: {
+      case CollectionChangeType.Pop: {
         this._array.pop();
         break;
       }
-      case ArrayChangeType.Shift: {
+      case CollectionChangeType.Shift: {
         this._array.shift();
         break;
       }
-      case ArrayChangeType.Clear: {
-        const [, items] = change as TArrayClearChange<T>;
+      case CollectionChangeType.Clear: {
+        const [, items] = change as TCollectionClearChange<T>;
         this._array.clear();
         this._array.push(...items);
         break;
       }
-      case ArrayChangeType.Sort: {
-        const [, items] = change as TArraySortChange<T>;
+      case CollectionChangeType.Sort: {
+        const [, items] = change as TCollectionSortChange<T>;
         this._array.clear();
         this._array.push(...items);
         break;
       }
-      case ArrayChangeType.Reverse: {
-        const [, items] = change as TArrayReverseChange<T>;
+      case CollectionChangeType.Reverse: {
+        const [, items] = change as TCollectionReverseChange<T>;
         this._array.clear();
         this._array.push(...items);
         break;
       }
-      case ArrayChangeType.Set: {
-        const [, index, value] = change as TArraySetChange<T>;
+      case CollectionChangeType.Set: {
+        const [, index, value] = change as TCollectionSetChange<T>;
         this._array.set(index, value);
         break;
       }
@@ -94,7 +106,7 @@ export class ChangableArray<T> implements IArray<T>, IChangable<T> {
   setChanges(changes: TChanges<T>): void {
     this.clearChanges();
     this._disableChanges = true;
-    const arrayChanges = changes as TArrayChange<T>[];
+    const arrayChanges = changes as TCollectionChange<T>[];
     arrayChanges.forEach((x) => this._setChange(x));
     this._disableChanges = false;
   }

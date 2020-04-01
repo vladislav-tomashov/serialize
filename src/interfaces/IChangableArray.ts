@@ -1,4 +1,4 @@
-import { ArrayAnalog } from "../ArrayAnalog";
+import { Collection } from "../Collection";
 import { IChangable } from "./IChangable";
 
-export interface IChangableArray<T> extends IChangable, ArrayAnalog<T> {}
+export interface IChangableArray<T> extends IChangable, Collection<T> {}

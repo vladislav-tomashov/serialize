@@ -1,4 +1,4 @@
-export interface IArray<T> {
+export interface ICollection<T> {
   /**
    * Gets or sets the length of the array. This is a number one higher than the highest element defined in an array.
    */

@@ -1,6 +1,6 @@
 import { IChangableArray } from "./interfaces/IChangableArray";
 import { ArrayChanges } from "./ArrayChanges";
-import { ArrayAnalog } from "./ArrayAnalog";
+import { Collection } from "./Collection";
 import { IArrayChangeItem } from "./interfaces/IArrayChangeItem";
 import { toChangable } from "./interfaces/IChangable";
 
@@ -11,7 +11,7 @@ class ChangableArray<T> implements IChangableArray<T> {
   private _changes?: ArrayChanges2<T>;
   private _changed = false;
 
-  constructor(private _array = new ArrayAnalog<T>()) {}
+  constructor(private _array = new Collection<T>()) {}
 
   get length(): number {
     return this._array.length;
@@ -190,7 +190,7 @@ class ChangableArray<T> implements IChangableArray<T> {
           this._array.splice(index as number, 0, value as T);
           break;
         case "constructor":
-          this._array = value as ArrayAnalog<T>;
+          this._array = value as Collection<T>;
           break;
         case "update":
           this._array.set(index as number, value as T);

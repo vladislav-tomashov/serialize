@@ -1,8 +1,8 @@
-import { ArrayAnalog } from "./ArrayAnalog";
+import { Collection } from "./Collection";
 
 class Class1 {
   private _prop1: number;
-  private _prop2: ArrayAnalog<string>;
+  private _prop2: Collection<string>;
   private _prop3: Date;
   private _prop4: Object;
 
@@ -13,7 +13,7 @@ class Class1 {
     prop4
   }: {
     prop1: number;
-    prop2: ArrayAnalog<string>;
+    prop2: Collection<string>;
     prop3: Date;
     prop4: Object;
   }) {
@@ -35,7 +35,7 @@ class Class1 {
     return this._prop2;
   }
 
-  set prop2(value: ArrayAnalog<string>) {
+  set prop2(value: Collection<string>) {
     this._prop2 = value;
   }
 

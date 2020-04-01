@@ -1,12 +1,16 @@
 export class Class1Serializable {
   private __primitiveProp: ChangableValue<string>;
 
-  private __arrProp: ChangableValue<ChangableArray<string>>;
+  private __arrProp: ChangableValue<ChangableCollection<string>>;
 
   constructor() {
     __primitiveProp = new ChangableValue<string>("abc");
 
-    __arrProp = new ChangableValue<ChangableArray<string>>(["a", "b", "c"]);
+    __arrProp = new ChangableValue<ChangableCollection<string>>([
+      "a",
+      "b",
+      "c"
+    ]);
   }
 
   private get _primitiveProp(): string {
@@ -17,11 +21,11 @@ export class Class1Serializable {
     this.__primitiveProp.value = value;
   }
 
-  private get _arrProp(): IArray<string> {
+  private get _arrProp(): ICollection<string> {
     return this.__arrProp.value;
   }
 
-  private set _arrProp(value: IArray<string>) {
+  private set _arrProp(value: ICollection<string>) {
     this.__arrProp.value = value;
   }
 

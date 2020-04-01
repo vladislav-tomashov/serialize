@@ -3,7 +3,7 @@ export enum ValueChangeType {
   OldValue
 }
 
-export enum ArrayChangeType {
+export enum CollectionChangeType {
   Push,
   Pop,
   Clear,
@@ -32,30 +32,38 @@ export type TValueChanges<T> =
 export type TChanges<T> =
   | TPrimitiveChanges<T>
   | TValueChanges<T>
-  | TArrayChange<T>[];
+  | TCollectionChange<T>[];
 
-export type TArrayPushChange<T> = [ArrayChangeType.Push, T[]];
+export type TCollectionPushChange<T> = [CollectionChangeType.Push, T[]];
 
-export type TArrayPopChange = [ArrayChangeType.Pop];
+export type TCollectionPopChange = [CollectionChangeType.Pop];
 
-export type TArrayClearChange<T> = [ArrayChangeType.Clear, T[]];
+export type TCollectionClearChange<T> = [CollectionChangeType.Clear, T[]];
 
-export type TArraySortChange<T> = [ArrayChangeType.Sort, T[]];
+export type TCollectionSortChange<T> = [CollectionChangeType.Sort, T[]];
 
-export type TArrayReverseChange<T> = [ArrayChangeType.Reverse, T[]];
+export type TCollectionReverseChange<T> = [CollectionChangeType.Reverse, T[]];
 
-export type TArraySetChange<T> = [ArrayChangeType.Set, number, T];
+export type TCollectionSetChange<T> = [CollectionChangeType.Set, number, T];
 
-export type TArrayUnshiftChange<T> = [ArrayChangeType.Unshift, T[]];
+export type TCollectionUnshiftChange<T> = [CollectionChangeType.Unshift, T[]];
 
-export type TArrayShiftChange = [ArrayChangeType.Shift];
+export type TCollectionShiftChange = [CollectionChangeType.Shift];
 
-export type TArrayChange<T> =
-  | TArrayPushChange<T>
-  | TArrayPopChange
-  | TArrayClearChange<T>
-  | TArraySortChange<T>
-  | TArrayReverseChange<T>
-  | TArraySetChange<T>
-  | TArrayUnshiftChange<T>
-  | TArrayShiftChange;
+export type TCollectionSpliceChange<T> = [
+  CollectionChangeType.Splice,
+  number,
+  number | undefined,
+  T[] | undefined
+];
+
+export type TCollectionChange<T> =
+  | TCollectionPushChange<T>
+  | TCollectionPopChange
+  | TCollectionClearChange<T>
+  | TCollectionSortChange<T>
+  | TCollectionReverseChange<T>
+  | TCollectionSetChange<T>
+  | TCollectionUnshiftChange<T>
+  | TCollectionShiftChange
+  | TCollectionSpliceChange<T>;

@@ -1,10 +1,10 @@
-import { IArray } from "./IArray";
+import { ICollection } from "./ICollection";
 
 interface IToArray<T> {
   toArray(): T[];
 }
 
-class ArrayAnalog<T> implements IArray<T> {
+class Collection<T> implements ICollection<T> {
   private _array: Array<T> = [];
 
   constructor(value: Array<T>);
@@ -194,4 +194,4 @@ class ArrayAnalog<T> implements IArray<T> {
   }
 }
 
-export { ArrayAnalog };
+export { Collection };
