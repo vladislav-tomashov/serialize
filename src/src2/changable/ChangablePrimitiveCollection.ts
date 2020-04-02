@@ -1,8 +1,6 @@
 import { ICollection } from "../Collection/ICollection";
-import { IChangable } from "./interfaces/IChangable";
 import { Collection } from "../Collection/Collection";
 import {
-  TChanges,
   TCollectionChange,
   CollectionChangeType,
   TCollectionPushChange,
@@ -11,34 +9,32 @@ import {
   TCollectionSortChange,
   TCollectionReverseChange,
   TCollectionSetChange,
-  TCollectionSpliceChange
-} from "./types";
+  TCollectionSpliceChange,
+  IChangablePrimitiveCollection
+} from "./interfaces";
 import { CollectionChanges } from "./CollectionChanges";
 
-export class ChangableCollection<T> implements ICollection<T>, IChangable<T> {
+export class ChangablePrimitiveCollection<T>
+  implements IChangablePrimitiveCollection<T> {
   private _array: Collection<T>;
   private _changes = new CollectionChanges<T>();
   private _disableChanges = false;
 
   isChangable: true = true;
+  isChangablePrimitiveCollection: true = true;
 
   constructor(value: T[]);
   constructor(value: ICollection<T>);
-  constructor(value: ICollection<T> | T[]) {
-    const valueAsIArray = value as ICollection<T>;
-    const array = valueAsIArray.toArray
-      ? valueAsIArray.toArray()
-      : (value as T[]);
-
-    this._array = new Collection(array);
+  constructor(value: any) {
+    this._array = new Collection(value);
   }
 
   get changed(): boolean {
     return this._changes.length > 0;
   }
 
-  getChanges(): TChanges<T> {
-    const result = this._changes.getChangesAndClear(this._array.toArray());
+  getChanges(): TCollectionChange<T>[] {
+    const result = this._changes.getChanges(this._array.toArray());
     return result;
   }
 
@@ -103,18 +99,15 @@ export class ChangableCollection<T> implements ICollection<T>, IChangable<T> {
     }
   }
 
-  setChanges(changes: TChanges<T>): void {
+  setChanges(changes: TCollectionChange<T>[]): void {
     this.clearChanges();
     this._disableChanges = true;
-    const arrayChanges = changes as TCollectionChange<T>[];
-    arrayChanges.forEach((x) => this._setChange(x));
+    changes.forEach((x) => this._setChange(x));
     this._disableChanges = false;
   }
 
   clearChanges(): void {
-    if (!this._disableChanges) {
-      this._changes.clear();
-    }
+    this._changes.clear();
   }
 
   get length(): number {

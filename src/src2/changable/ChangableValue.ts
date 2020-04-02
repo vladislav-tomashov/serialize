@@ -1,11 +1,15 @@
 import { ChangablePrimitive } from "./ChangablePrimitive";
-import { toChangable } from "./utils";
-import { IChangable } from "./interfaces/IChangable";
-import { TValueChanges, ValueChangeType } from "./types";
+import {
+  toChangable,
+  TValueChanges,
+  ValueChangeType,
+  IChangableValue
+} from "./interfaces";
 
-export class ChangableValue<T> implements IChangable<T> {
+export class ChangableValue<T> implements IChangableValue<T> {
   private _value: ChangablePrimitive<T>;
 
+  isChangableValue: true = true;
   isChangable: true = true;
 
   constructor(value: T) {

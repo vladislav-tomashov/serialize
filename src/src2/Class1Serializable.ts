@@ -1,12 +1,12 @@
 export class Class1Serializable {
   private __primitiveProp: ChangableValue<string>;
 
-  private __arrProp: ChangableValue<ChangableCollection<string>>;
+  private __arrProp: ChangableValue<ChangablePrimitiveCollection<string>>;
 
   constructor() {
     __primitiveProp = new ChangableValue<string>("abc");
 
-    __arrProp = new ChangableValue<ChangableCollection<string>>([
+    __arrProp = new ChangableValue<ChangablePrimitiveCollection<string>>([
       "a",
       "b",
       "c"

@@ -1,10 +1,10 @@
-import { IChangable } from "./interfaces/IChangable";
-import { TPrimitiveChanges } from "./types";
+import { TPrimitiveChanges, IChangablePrimitive } from "./interfaces";
 
-export class ChangablePrimitive<T> implements IChangable<T> {
+export class ChangablePrimitive<T> implements IChangablePrimitive<T> {
   private _changed = false;
 
   isChangable: true = true;
+  isChangablePrimitive: true = true;
 
   constructor(private _value: T) {}
 

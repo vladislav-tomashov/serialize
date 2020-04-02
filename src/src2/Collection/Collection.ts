@@ -9,7 +9,7 @@ class Collection<T> implements ICollection<T> {
 
   constructor(value: Array<T>);
   constructor(value: IToArray<T>);
-  constructor(value: Array<T> | IToArray<T>) {
+  constructor(value: any) {
     const array = Array.isArray(value) ? value : value.toArray();
     this._array = array;
   }
