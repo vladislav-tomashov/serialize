@@ -1,11 +1,11 @@
-import { ICollection } from "./interfaces";
+import { IArrayCollection } from "./collections.interfaces";
 
 interface IToArray<T> {
   toArray(): T[];
 }
 
-class Collection<T> implements ICollection<T> {
-  private _array: Array<T> = [];
+class ArrayCollection<T> implements IArrayCollection<T> {
+  protected _array: Array<T> = [];
 
   constructor(value: Array<T>);
   constructor(value: IToArray<T>);
@@ -194,4 +194,4 @@ class Collection<T> implements ICollection<T> {
   }
 }
 
-export { Collection };
+export { ArrayCollection };

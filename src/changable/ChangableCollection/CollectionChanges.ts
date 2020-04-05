@@ -9,8 +9,8 @@ import {
   TCollectionSetChange,
   TCollectionUnshiftChange,
   TCollectionShiftChange,
-  TCollectionSpliceChange
-} from "./interfaces";
+  TCollectionSpliceChange,
+} from "./ChangableCollection.interfaces";
 
 type TPushChange<T> = [CollectionChangeType.Push, T[]];
 
@@ -73,7 +73,7 @@ export class CollectionChanges<T> {
       CollectionChangeType.Splice,
       start,
       deleteCount,
-      items
+      items,
     ] as TSpliceChange<T>;
 
     this._log.push(change);
@@ -158,8 +158,7 @@ export class CollectionChanges<T> {
   }
 
   getChanges(source: T[]): TCollectionChange<T>[] {
-    const result = this._log.map((x) => this._getChange(x, source));
-    return result;
+    return this._log.map((x) => this._getChange(x, source));
   }
 
   private _getChange(change: TChange<T>, source: T[]): TCollectionChange<T> {
@@ -183,7 +182,7 @@ export class CollectionChanges<T> {
       case CollectionChangeType.Reverse:
         return [
           CollectionChangeType.Reverse,
-          source
+          source,
         ] as TCollectionReverseChange<T>;
       case CollectionChangeType.Set:
         return change as TCollectionSetChange<T>;
