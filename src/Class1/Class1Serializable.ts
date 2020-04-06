@@ -44,12 +44,24 @@ export class Class1Serializable
   // not serializable
   private _prop4: string;
 
-  constructor(arg1: IClass1Json, arg2: any);
+  constructor(json: IClass1Json, arg2?: any | undefined);
   constructor(arg1: number, arg2: string);
   constructor(arg1: any, arg2: any) {
+    const fromJson = isClass1Json(arg1);
+
     this._state = new ChangableObjectState<IClass1State, TClass1StateKey>(
-      isClass1Json(arg1) ? arg1.class1State : defaultClass1State
+      fromJson ? arg1.class1State : defaultClass1State
     );
+
+    if (fromJson) {
+      // init _prop4
+      if (arg1 === 1) {
+        this._prop4 = "goodbye";
+      } else {
+        this._prop4 = "hello";
+      }
+      return;
+    }
 
     // copied from Class1 constructor
     if (arg1 === 1) {
@@ -117,8 +129,12 @@ export class Class1Serializable
     return this._state.changed;
   }
 
-  clearChanges(): void {
-    this._state.clearChanges();
+  disableChanges(): void {
+    this._state.disableChanges();
+  }
+
+  enableChanges(): void {
+    this._state.enableChanges();
   }
 
   getChanges(): [TObjectChange, TNestedChanges<TClass1StateKey>] {

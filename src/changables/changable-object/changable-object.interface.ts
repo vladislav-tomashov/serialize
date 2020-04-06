@@ -24,7 +24,9 @@ export interface ISetProperty<T, K extends keyof T> {
 export interface IOwnChanges {
   readonly hasOwnChanges: boolean;
 
-  clearOwnChanges(): void;
+  disableOwnChanges(): void;
+
+  enableOwnChanges(): void;
 
   getOwnChanges(): TOwnChanges;
 
@@ -34,7 +36,9 @@ export interface IOwnChanges {
 export interface INestedChanges<K> {
   readonly hasNestedChanges: boolean;
 
-  clearNestedChanges(): void;
+  disableNestedChanges(): void;
+
+  enableNestedChanges(): void;
 
   getNestedChanges(): TNestedChanges<K>;
 

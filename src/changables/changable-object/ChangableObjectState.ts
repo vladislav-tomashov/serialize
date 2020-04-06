@@ -16,13 +16,28 @@ export class ChangableObjectState<T extends object, K extends keyof T>
 
   private _changes = new ObjectChanges<T, K>();
 
+  // Overrides
+  setProperty(prop: K, value: T[K]) {
+    this._state[prop] = value;
+    this._changes.registerPropertyUpdate(prop);
+
+    const changable = toChangable(this._state[prop]);
+    if (changable) {
+      changable.disableChanges();
+    }
+  }
+
   // Implementation of interface INestedChanges
   get hasNestedChanges(): boolean {
     return this.getChangableEntries().some(([, x]) => x.changed);
   }
 
-  clearNestedChanges(): void {
-    this.getChangableEntries().forEach(([, x]) => x.clearChanges());
+  disableNestedChanges(): void {
+    this.getChangableEntries().forEach(([, x]) => x.disableChanges());
+  }
+
+  enableNestedChanges(): void {
+    this.getChangableEntries().forEach(([, x]) => x.enableChanges());
   }
 
   getNestedChanges(): TNestedChanges<K> {
@@ -62,8 +77,12 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     return this._changes.length > 0;
   }
 
-  clearOwnChanges(): void {
-    this._changes.clear();
+  disableOwnChanges(): void {
+    this._changes.disable();
+  }
+
+  enableOwnChanges(): void {
+    this._changes.enable();
   }
 
   getOwnChanges(): TObjectChange {
@@ -71,13 +90,15 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   }
 
   setOwnChanges(changes: TObjectChange): void {
-    this.clearOwnChanges();
+    this.disableOwnChanges();
 
     changes.forEach((change) => {
       const [key, value] = change;
       const prop = <K>key;
       this._state[prop] = value;
     });
+
+    this.enableOwnChanges();
   }
 
   // Implementation of interface IChangable
@@ -85,9 +106,14 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     return this.hasOwnChanges || this.hasNestedChanges;
   }
 
-  clearChanges(): void {
-    this.clearNestedChanges();
-    this.clearOwnChanges();
+  disableChanges(): void {
+    this.disableOwnChanges();
+    this.disableNestedChanges();
+  }
+
+  enableChanges(): void {
+    this.enableOwnChanges();
+    this.enableNestedChanges();
   }
 
   getChanges(): [TObjectChange, TNestedChanges<K>] {

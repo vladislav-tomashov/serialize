@@ -2,18 +2,34 @@ import { IGetProperty, TPropertyChange } from "./changable-object.interface";
 
 export class ObjectChanges<T, K extends keyof T> {
   private _log = new Set<K>();
+  private _disabled = false;
 
   get length() {
     return this._log.size;
   }
 
-  clear() {
-    if (this.length > 0) {
-      this._log.clear();
+  disable() {
+    this._clear();
+
+    if (this._disabled) {
+      return;
     }
+    this._disabled = true;
+  }
+
+  enable() {
+    if (!this._disabled) {
+      return;
+    }
+
+    this._disabled = false;
   }
 
   registerPropertyUpdate(prop: K) {
+    if (this._disabled) {
+      return;
+    }
+
     this._log.add(prop);
   }
 
@@ -23,5 +39,12 @@ export class ObjectChanges<T, K extends keyof T> {
     );
 
     return result;
+  }
+
+  // private
+  private _clear() {
+    if (this.length > 0) {
+      this._log.clear();
+    }
   }
 }

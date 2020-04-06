@@ -48,24 +48,31 @@ type TChange<T> =
 
 export class ArrayCollectionChanges<T> {
   private _log: Array<TChange<T>> = [];
-  private _skipFutherChanges = false;
+  private _disabled = false;
 
   get length() {
     return this._log.length;
   }
 
-  clear() {
-    if (this._skipFutherChanges) {
-      this._skipFutherChanges = false;
+  disable() {
+    this._clear();
+
+    if (this._disabled) {
+      return;
+    }
+    this._disabled = true;
+  }
+
+  enable() {
+    if (!this._disabled || this.length > 0) {
+      return;
     }
 
-    if (this._log.length > 0) {
-      this._log = [];
-    }
+    this._disabled = false;
   }
 
   registerSplice(start: number, deleteCount: number, items: T[]) {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
@@ -80,7 +87,7 @@ export class ArrayCollectionChanges<T> {
   }
 
   registerSet(index: number, value: T) {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
@@ -89,7 +96,7 @@ export class ArrayCollectionChanges<T> {
   }
 
   registerPop() {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
@@ -98,7 +105,7 @@ export class ArrayCollectionChanges<T> {
   }
 
   registerShift() {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
@@ -107,40 +114,40 @@ export class ArrayCollectionChanges<T> {
   }
 
   registerClear() {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
     const change = [CollectionChangeType.Clear] as TClearChange;
     this._log = [];
     this._log.push(change);
-    this._skipFutherChanges = true;
+    this._disabled = true;
   }
 
   registerSort() {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
     const change = [CollectionChangeType.Sort] as TSortChange;
     this._log = [];
     this._log.push(change);
-    this._skipFutherChanges = true;
+    this._disabled = true;
   }
 
   registerReverse() {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
     const change = [CollectionChangeType.Reverse] as TReverseChange;
     this._log = [];
     this._log.push(change);
-    this._skipFutherChanges = true;
+    this._disabled = true;
   }
 
   registerPush(items: T[]) {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
@@ -149,7 +156,7 @@ export class ArrayCollectionChanges<T> {
   }
 
   registerUnshift(items: T[]) {
-    if (this._skipFutherChanges) {
+    if (this._disabled) {
       return;
     }
 
@@ -190,6 +197,12 @@ export class ArrayCollectionChanges<T> {
         return change as TCollectionSpliceChange<T>;
       default:
         throw new Error(`Unknown array change type=${changeType}`);
+    }
+  }
+
+  private _clear() {
+    if (this._log.length > 0) {
+      this._log = [];
     }
   }
 }

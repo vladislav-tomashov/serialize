@@ -10,7 +10,9 @@ export interface IChangable<K> {
 
   readonly changed: boolean;
 
-  clearChanges(): void;
+  disableChanges(): void;
+
+  enableChanges(): void;
 
   getChanges(): TChanges<K>;
 
