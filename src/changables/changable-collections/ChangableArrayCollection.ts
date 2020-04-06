@@ -1,6 +1,6 @@
-import { CollectionChanges } from "./CollectionChanges";
+import { ArrayCollectionChanges } from "./ArrayCollectionChanges";
 import { ArrayCollection } from "../../collections/ArrayCollection";
-import { IChangable, isChangable, TChanges } from "../changable.interfaces";
+import { IChangable, isChangable, TChanges } from "../changables.interface";
 import {
   TCollectionChange,
   CollectionChangeType,
@@ -11,16 +11,16 @@ import {
   TCollectionSortChange,
   TCollectionReverseChange,
   TCollectionSetChange,
-} from "./ChangableCollection.interfaces";
+} from "./changable-collections.interface";
 import {
   IOwnChanges,
   INestedChanges,
   TNestedChanges,
-} from "../ChangableObject/ChangableObject.interfaces";
+} from "../changable-object/changable-object.interface";
 
 export class ChangableArrayCollection<T> extends ArrayCollection<T>
   implements IChangable<number>, IOwnChanges, INestedChanges<number> {
-  private _changes = new CollectionChanges<T>();
+  private _changes = new ArrayCollectionChanges<T>();
 
   // implementation of interface IOwnChanges
   get hasOwnChanges(): boolean {

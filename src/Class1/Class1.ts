@@ -1,8 +1,9 @@
-import { IClass1 } from "./Class1.interfaces";
+import { IClass1 } from "./Class1.interface";
 
 export class Class1 implements IClass1 {
   private _prop1: string = "Hello!"; // serialize
   private _prop4: string; // do not serialize
+  private _arr: number[]; // serialize
 
   protected _prop2: number = 0; // serialize
 
@@ -12,9 +13,11 @@ export class Class1 implements IClass1 {
     if (arg1 === 1) {
       this._prop2 = 5;
       this._prop4 = "goodbye";
+      this._arr = [1, 2, 3];
     } else {
       this._prop2 = 6;
       this._prop4 = "hello";
+      this._arr = [4, 5, 6];
     }
 
     this.prop3 = "abc";
@@ -22,5 +25,6 @@ export class Class1 implements IClass1 {
 
   func1(): void {
     this._prop2 = this._prop2 + 1;
+    this._arr.push(10);
   }
 }

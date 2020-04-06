@@ -3,10 +3,10 @@ import {
   INestedChanges,
   IOwnChanges,
   TNestedChanges,
-  TOwnChanges,
-} from "./ChangableObject.interfaces";
+  TObjectChange,
+} from "./changable-object.interface";
 import { ObjectChanges } from "./ObjectChanges";
-import { IChangable, TChanges, toChangable } from "../changable.interfaces";
+import { IChangable, TChanges, toChangable } from "../changables.interface";
 import { SimpleObjectState } from "./SimpleObjectState";
 
 export class ChangableObjectState<T extends object, K extends keyof T>
@@ -66,11 +66,11 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     this._changes.clear();
   }
 
-  getOwnChanges(): TOwnChanges {
+  getOwnChanges(): TObjectChange {
     return this._changes.getChanges(this);
   }
 
-  setOwnChanges(changes: TOwnChanges): void {
+  setOwnChanges(changes: TObjectChange): void {
     this.clearOwnChanges();
 
     changes.forEach((change) => {
@@ -90,11 +90,11 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     this.clearOwnChanges();
   }
 
-  getChanges(): TChanges<K> {
+  getChanges(): [TObjectChange, TNestedChanges<K>] {
     return [this.getOwnChanges(), this.getNestedChanges()];
   }
 
-  setChanges(changes: TChanges<K>): void {
+  setChanges(changes: [TObjectChange, TNestedChanges<K>]): void {
     const [ownChanges, nestedChanges] = changes;
     this.setOwnChanges(ownChanges);
     this.setNestedChanges(nestedChanges);
@@ -105,7 +105,7 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     const result = <T>{};
 
     this._stateKeys.forEach((prop) => {
-      result[prop] = this.getProperty(prop);
+      result[prop] = this._state[prop];
     });
 
     return result;

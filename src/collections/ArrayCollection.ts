@@ -1,4 +1,4 @@
-import { IArrayCollection } from "./collections.interfaces";
+import { IArrayCollection } from "./collections.interface";
 
 interface IToArray<T> {
   toArray(): T[];

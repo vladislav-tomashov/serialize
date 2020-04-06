@@ -1,4 +1,4 @@
-import { IGetProperty, TPropertyChange } from "./ChangableObject.interfaces";
+import { IGetProperty, TPropertyChange } from "./changable-object.interface";
 
 export class ObjectChanges<T, K extends keyof T> {
   private _log = new Set<K>();

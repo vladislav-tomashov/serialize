@@ -10,7 +10,7 @@ import {
   TCollectionUnshiftChange,
   TCollectionShiftChange,
   TCollectionSpliceChange,
-} from "./ChangableCollection.interfaces";
+} from "./changable-collections.interface";
 
 type TPushChange<T> = [CollectionChangeType.Push, T[]];
 
@@ -46,7 +46,7 @@ type TChange<T> =
   | TShiftChange
   | TSpliceChange<T>;
 
-export class CollectionChanges<T> {
+export class ArrayCollectionChanges<T> {
   private _log: Array<TChange<T>> = [];
   private _skipFutherChanges = false;
 
