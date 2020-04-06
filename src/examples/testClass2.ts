@@ -26,7 +26,6 @@ a.prop1.prop3 = "test";
 // console.log(JSON.stringify(a, undefined, 4));
 
 // console.log("a after changes", a);
-// console.log("a after changes JSON", JSON.stringify(a));
 
 const changes = a.getChanges();
 const serializedChanges = JSON.stringify(changes);
@@ -39,3 +38,4 @@ console.log("serialized a changes", serializedChanges);
 b.setChanges(JSON.parse(serializedChanges));
 // // console.log("b after changes", b);
 console.log("b after changes JSON", JSON.stringify(b));
+console.log("serializedB=serializedA", JSON.stringify(a) === JSON.stringify(b));

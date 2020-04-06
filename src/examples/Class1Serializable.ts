@@ -8,7 +8,7 @@ import {
 import { IChangable } from "../changables/changables.interface";
 import { ChangableObjectState } from "../changables/changableObject/ChangableObjectState";
 
-interface IClass1State {
+export interface IClass1State {
   _prop1: string;
   _prop2: number;
   prop3?: string;
@@ -17,8 +17,24 @@ interface IClass1State {
 
 export type TClass1StateKey = keyof IClass1State;
 
-function getDefaultClass1State(): IClass1State {
+function getDefaultState(): IClass1State {
   return { _prop1: "Hello!", _prop2: 0, prop3: undefined, _arr: undefined };
+}
+
+function getStateFromJson(
+  json: IClass1State = getDefaultState()
+): IClass1State {
+  const { _prop1, _prop2, prop3, _arr } = json;
+
+  return {
+    _prop1: <string>_prop1,
+    _prop2: <number>_prop2,
+    prop3: prop3 === undefined ? undefined : <string>prop3,
+    _arr:
+      _arr === undefined
+        ? undefined
+        : new ChangableArrayCollection(<number[]>(<unknown>_arr)),
+  };
 }
 
 export interface IClass1Json {
@@ -40,13 +56,13 @@ export class Class1Serializable
   // not serializable
   private _prop4: string;
 
-  constructor(json: IClass1Json, arg2?: any | undefined);
+  constructor(json: IClass1Json);
   constructor(arg1: number, arg2: string);
-  constructor(arg1: any, arg2: any) {
+  constructor(arg1: any, arg2?: any) {
     const fromJson = isClass1Json(arg1);
 
     this._state = new ChangableObjectState<IClass1State, TClass1StateKey>(
-      fromJson ? arg1.class1State : getDefaultClass1State()
+      getStateFromJson(fromJson ? arg1.class1State : undefined)
     );
 
     if (fromJson) {

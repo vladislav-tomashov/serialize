@@ -48,17 +48,17 @@ export class ChangableObjectState<T extends object, K extends keyof T>
 
   setNestedChanges(changes: TNestedChanges<K>): void {
     changes.forEach(([prop, change]) => {
-      const changable = toChangable(this._state[prop]);
-      if (!changable) {
-        console.log("this._state", this._state);
-        console.log("this._state[prop]", this._state[prop]);
-        throw new Error(
-          `setNestedChanges(): Property "${prop}" is not IChangable. changes=${JSON.stringify(
-            change
-          )}`
-        );
-      }
-      // const changable = <IChangable<K>>(<unknown>this._state[prop]);
+      // const changable = toChangable(this._state[prop]);
+      // if (!changable) {
+      //   console.log("this._state", this._state);
+      //   console.log("this._state[prop]", this._state[prop]);
+      //   throw new Error(
+      //     `setNestedChanges(): Property "${prop}" is not IChangable. changes=${JSON.stringify(
+      //       change
+      //     )}`
+      //   );
+      // }
+      const changable = <IChangable<K>>(<unknown>this._state[prop]);
       changable.setChanges(change);
     });
   }

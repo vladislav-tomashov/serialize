@@ -9,22 +9,31 @@ import { IChangable } from "../changables/changables.interface";
 import { ChangableObjectState } from "../changables/changableObject/ChangableObjectState";
 import { Class1Serializable, IClass1Json } from "./Class1Serializable";
 
-interface IClass2State {
+export interface IClass2State {
   prop1?: Class1Serializable;
   prop2?: ChangableArrayCollection<Class1Serializable>;
 }
 
-type TClass2StateKey = keyof IClass2State;
+export type TClass2StateKey = keyof IClass2State;
 
-function getDefaultClass2State(): IClass2State {
+function getDefaultState(): IClass2State {
   return { prop1: undefined, prop2: undefined };
 }
 
-function getClass2StateFromJson(json: IClass2State): IClass2State {
+function getStateFromJson(
+  json: IClass2State = getDefaultState()
+): IClass2State {
   const { prop1, prop2 } = json;
+
   return {
-    prop1: new Class1Serializable(<IClass1Json>(<unknown>prop1)),
-    prop2: new ChangableArrayCollection(<Class1Serializable[]>(<unknown>prop2)),
+    prop1:
+      prop1 === undefined
+        ? undefined
+        : new Class1Serializable(<IClass1Json>(<unknown>prop1)),
+    prop2:
+      prop2 === undefined
+        ? undefined
+        : new ChangableArrayCollection(<Class1Serializable[]>(<unknown>prop2)),
   };
 }
 
@@ -36,9 +45,11 @@ export class Class2Serializable
   implements IClass2, IToJSON<IClass2Json>, IChangable<TClass2StateKey> {
   protected _state: ChangableObjectState<IClass2State, TClass2StateKey>;
 
-  constructor(json?: IClass2Json) {
+  constructor();
+  constructor(json: IClass2Json);
+  constructor(json?: any) {
     this._state = new ChangableObjectState<IClass2State, TClass2StateKey>(
-      json ? getClass2StateFromJson(json.class2State) : getDefaultClass2State()
+      getStateFromJson(json ? json.class2State : undefined)
     );
 
     if (json) {
