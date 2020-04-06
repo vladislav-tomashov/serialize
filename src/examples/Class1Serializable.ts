@@ -1,31 +1,27 @@
-import { IClass1 } from "./Class1.interface";
-import { IArrayCollection } from "../collections/collections.interface";
-import { ChangableArrayCollection } from "../changables/changable-collections/ChangableArrayCollection";
+import { IClass1 } from "./IClass1";
+import { ChangableArrayCollection } from "../changables/changableCollections/ChangableArrayCollection";
 import {
   IToJSON,
   TNestedChanges,
   TObjectChange,
-} from "../changables/changable-object/changable-object.interface";
+} from "../changables/changableObject/changableObject.interface";
 import { IChangable } from "../changables/changables.interface";
-import { ChangableObjectState } from "../changables/changable-object/ChangableObjectState";
+import { ChangableObjectState } from "../changables/changableObject/ChangableObjectState";
 
-export interface IClass1State {
+interface IClass1State {
   _prop1: string;
   _prop2: number;
   prop3?: string;
-  _arr?: IArrayCollection<number>;
+  _arr?: ChangableArrayCollection<number>;
 }
-
-export const defaultClass1State: IClass1State = {
-  _prop1: "Hello!",
-  _prop2: 0,
-  prop3: undefined,
-  _arr: undefined,
-};
 
 export type TClass1StateKey = keyof IClass1State;
 
-interface IClass1Json {
+function getDefaultClass1State(): IClass1State {
+  return { _prop1: "Hello!", _prop2: 0, prop3: undefined, _arr: undefined };
+}
+
+export interface IClass1Json {
   class1State: IClass1State;
 }
 
@@ -50,7 +46,7 @@ export class Class1Serializable
     const fromJson = isClass1Json(arg1);
 
     this._state = new ChangableObjectState<IClass1State, TClass1StateKey>(
-      fromJson ? arg1.class1State : defaultClass1State
+      fromJson ? arg1.class1State : getDefaultClass1State()
     );
 
     if (fromJson) {
@@ -62,6 +58,8 @@ export class Class1Serializable
       }
       return;
     }
+
+    this._state.disableChanges();
 
     // copied from Class1 constructor
     if (arg1 === 1) {
@@ -75,6 +73,8 @@ export class Class1Serializable
     }
 
     this.prop3 = "abc";
+
+    this._state.enableChanges();
   }
 
   // Implementation of interface IClass1
@@ -110,10 +110,10 @@ export class Class1Serializable
   }
 
   private get _arr() {
-    return <IArrayCollection<number>>this._state.getProperty("_arr");
+    return <ChangableArrayCollection<number>>this._state.getProperty("_arr");
   }
 
-  private set _arr(value: IArrayCollection<number>) {
+  private set _arr(value: ChangableArrayCollection<number>) {
     this._state.setProperty("_arr", value);
   }
 

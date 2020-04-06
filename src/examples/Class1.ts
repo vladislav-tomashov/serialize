@@ -1,4 +1,4 @@
-import { IClass1 } from "./Class1.interface";
+import { IClass1 } from "./IClass1";
 
 export class Class1 implements IClass1 {
   private _prop1: string = "Hello!"; // serialize

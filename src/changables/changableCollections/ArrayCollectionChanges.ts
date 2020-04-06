@@ -10,7 +10,7 @@ import {
   TCollectionUnshiftChange,
   TCollectionShiftChange,
   TCollectionSpliceChange,
-} from "./changable-collections.interface";
+} from "./changableCollections.interface";
 
 type TPushChange<T> = [CollectionChangeType.Push, T[]];
 
@@ -168,6 +168,7 @@ export class ArrayCollectionChanges<T> {
     return this._log.map((x) => this._getChange(x, source));
   }
 
+  // private
   private _getChange(change: TChange<T>, source: T[]): TCollectionChange<T> {
     const [changeType] = change;
 

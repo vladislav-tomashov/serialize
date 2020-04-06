@@ -16,12 +16,12 @@ import {
   TCollectionSortChange,
   TCollectionReverseChange,
   TCollectionSetChange,
-} from "./changable-collections.interface";
+} from "./changableCollections.interface";
 import {
   IOwnChanges,
   INestedChanges,
   TNestedChanges,
-} from "../changable-object/changable-object.interface";
+} from "../changableObject/changableObject.interface";
 
 export class ChangableArrayCollection<T> extends ArrayCollection<T>
   implements IChangable<number>, IOwnChanges, INestedChanges<number> {

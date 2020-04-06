@@ -1,4 +1,4 @@
-import { TCollectionChange } from "../changable-collections/changable-collections.interface";
+import { TCollectionChange } from "../changableCollections/changableCollections.interface";
 import { TChanges, IChangable } from "../changables.interface";
 
 export type TPropertyChange<T> = [string, T];

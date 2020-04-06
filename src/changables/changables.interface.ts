@@ -1,7 +1,7 @@
 import {
   TOwnChanges,
   TNestedChanges,
-} from "./changable-object/changable-object.interface";
+} from "./changableObject/changableObject.interface";
 
 export type TChanges<K> = [TOwnChanges, TNestedChanges<K>];
 
