@@ -1,6 +1,6 @@
 import { Class2Serializable } from "./Class2Serializable";
 
-// console.log("Serialize test");
+console.log("========== Class2Serializable tests ==========");
 
 const a = new Class2Serializable();
 const serializedA = JSON.stringify(a);

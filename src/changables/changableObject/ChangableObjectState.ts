@@ -11,13 +11,16 @@ import { SimpleObjectState } from "./SimpleObjectState";
 
 export class ChangableObjectState<T extends object, K extends keyof T>
   extends SimpleObjectState<T, K>
-  implements IChangable<K>, INestedChanges<K>, IOwnChanges, IToJSON<T> {
-  isChangable: true = true;
-
+  implements
+    IChangable<K>,
+    INestedChanges<K>,
+    IOwnChanges,
+    IToJSON<{ [key: string]: any }> {
   private _changes = new ObjectChanges<T, K>();
+  private _cacheStateKeys?: K[];
 
   // Overrides
-  setProperty(prop: K, value: T[K]) {
+  setProperty(prop: K, value: T[K]): void {
     this._state[prop] = value;
     this._changes.registerPropertyUpdate(prop);
 
@@ -106,6 +109,8 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   }
 
   // Implementation of interface IChangable
+  isChangable: true = true;
+
   get changed(): boolean {
     return this.hasOwnChanges || this.hasNestedChanges;
   }
@@ -131,7 +136,7 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   }
 
   // implementation of interface IToJSON
-  toJSON(): T {
+  toJSON(): { [keys: string]: any } {
     const result = <T>{};
 
     this._stateKeys.forEach((prop) => {
@@ -139,5 +144,14 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     });
 
     return result;
+  }
+
+  // private and protected members
+  protected get _stateKeys(): K[] {
+    if (!this._cacheStateKeys) {
+      this._cacheStateKeys = Object.keys(this._state).map((key) => <K>key);
+    }
+
+    return <K[]>this._cacheStateKeys;
   }
 }

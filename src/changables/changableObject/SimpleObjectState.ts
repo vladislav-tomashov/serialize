@@ -2,7 +2,6 @@ import { IObjectState } from "./changableObject.interface";
 
 export class SimpleObjectState<T extends object, K extends keyof T>
   implements IObjectState<T, K> {
-  private _cacheStateKeys?: K[];
 
   constructor(protected _state: T) {}
 
@@ -11,16 +10,7 @@ export class SimpleObjectState<T extends object, K extends keyof T>
     return this._state[prop];
   }
 
-  setProperty(prop: K, value: T[K]) {
+  setProperty(prop: K, value: T[K]): void {
     this._state[prop] = value;
-  }
-
-  // private and protected members
-  protected get _stateKeys(): K[] {
-    if (!this._cacheStateKeys) {
-      this._cacheStateKeys = Object.keys(this._state).map((key) => <K>key);
-    }
-
-    return <K[]>this._cacheStateKeys;
   }
 }

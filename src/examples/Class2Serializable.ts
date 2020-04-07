@@ -16,29 +16,35 @@ export interface IClass2State {
 
 export type TClass2StateKey = keyof IClass2State;
 
-function getDefaultState(): IClass2State {
+function getDefaultStateOptions(): IClass2State {
   return { prop1: undefined, prop2: undefined };
 }
 
-function getStateFromJson(
-  json: IClass2State = getDefaultState()
-): IClass2State {
-  const { prop1, prop2 } = json;
+export interface IClass2Json {
+  class2: true;
+  state: { [key: string]: any };
+}
+
+export function isClass2Json(value: any): value is IClass2Json {
+  if (typeof value !== "object") {
+    return false;
+  }
+
+  return Boolean(value.class2);
+}
+
+function getStateOptionsFromJson(json: IClass2Json): IClass2State {
+  const { state } = json;
+  const { prop1, prop2 } = state;
 
   return {
     prop1:
       prop1 === undefined
         ? undefined
-        : new Class1Serializable(<IClass1Json>(<unknown>prop1)),
+        : new Class1Serializable(<IClass1Json>prop1),
     prop2:
-      prop2 === undefined
-        ? undefined
-        : new ChangableArrayCollection(<Class1Serializable[]>(<unknown>prop2)),
+      prop2 === undefined ? undefined : new ChangableArrayCollection(prop2),
   };
-}
-
-export interface IClass2Json {
-  class2State: IClass2State;
 }
 
 export class Class2Serializable
@@ -48,15 +54,17 @@ export class Class2Serializable
   constructor();
   constructor(json: IClass2Json);
   constructor(json?: any) {
+    const fromJson = isClass2Json(json);
+
     this._state = new ChangableObjectState<IClass2State, TClass2StateKey>(
-      getStateFromJson(json ? json.class2State : undefined)
+      fromJson ? getStateOptionsFromJson(json) : getDefaultStateOptions()
     );
 
-    if (json) {
+    if (fromJson) {
       return;
     }
 
-    this._state.disableChanges();
+    this.disableChanges();
 
     this.prop1 = new Class1Serializable(5, "hfufhvhf");
     this.prop2 = new ChangableArrayCollection([
@@ -64,7 +72,7 @@ export class Class2Serializable
       new Class1Serializable(2, "test2"),
     ]);
 
-    this._state.enableChanges();
+    this.enableChanges();
   }
 
   // Proxied state properties
@@ -88,7 +96,7 @@ export class Class2Serializable
 
   // implementation of interface IToJSON
   toJSON(): IClass2Json {
-    return { class2State: this._state.toJSON() };
+    return { class2: true, state: this._state.toJSON() };
   }
 
   // implementation of interface IChangable

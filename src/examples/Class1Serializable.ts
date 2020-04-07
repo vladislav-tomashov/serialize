@@ -17,28 +17,13 @@ export interface IClass1State {
 
 export type TClass1StateKey = keyof IClass1State;
 
-function getDefaultState(): IClass1State {
+function getDefaultStateOptions(): IClass1State {
   return { _prop1: "Hello!", _prop2: 0, prop3: undefined, _arr: undefined };
 }
 
-function getStateFromJson(
-  json: IClass1State = getDefaultState()
-): IClass1State {
-  const { _prop1, _prop2, prop3, _arr } = json;
-
-  return {
-    _prop1: <string>_prop1,
-    _prop2: <number>_prop2,
-    prop3: prop3 === undefined ? undefined : <string>prop3,
-    _arr:
-      _arr === undefined
-        ? undefined
-        : new ChangableArrayCollection(<number[]>(<unknown>_arr)),
-  };
-}
-
 export interface IClass1Json {
-  class1State: IClass1State;
+  class1: true;
+  state: { [key: string]: any };
 }
 
 function isClass1Json(value: any): value is IClass1Json {
@@ -46,7 +31,19 @@ function isClass1Json(value: any): value is IClass1Json {
     return false;
   }
 
-  return !!value.class1State;
+  return Boolean(value.class1);
+}
+
+function getStateOptionsFromJson(json: IClass1Json): IClass1State {
+  const { state } = json;
+  const { _prop1, _prop2, prop3, _arr } = state;
+
+  return {
+    _prop1,
+    _prop2,
+    prop3,
+    _arr: _arr === undefined ? undefined : new ChangableArrayCollection(_arr),
+  };
 }
 
 export class Class1Serializable
@@ -62,7 +59,7 @@ export class Class1Serializable
     const fromJson = isClass1Json(arg1);
 
     this._state = new ChangableObjectState<IClass1State, TClass1StateKey>(
-      getStateFromJson(fromJson ? arg1.class1State : undefined)
+      fromJson ? getStateOptionsFromJson(arg1) : getDefaultStateOptions()
     );
 
     if (fromJson) {
@@ -72,10 +69,11 @@ export class Class1Serializable
       } else {
         this._prop4 = "hello";
       }
+
       return;
     }
 
-    this._state.disableChanges();
+    this.disableChanges();
 
     // copied from Class1 constructor
     if (arg1 === 1) {
@@ -90,7 +88,7 @@ export class Class1Serializable
 
     this.prop3 = "abc";
 
-    this._state.enableChanges();
+    this.enableChanges();
   }
 
   // Implementation of interface IClass1
@@ -135,7 +133,7 @@ export class Class1Serializable
 
   // implementation of interface IToJSON
   toJSON(): IClass1Json {
-    return { class1State: this._state.toJSON() };
+    return { class1: true, state: this._state.toJSON() };
   }
 
   // implementation of interface IChangable
