@@ -17,33 +17,17 @@ export interface IClass1State {
 
 export type TClass1StateKey = keyof IClass1State;
 
-function getDefaultStateOptions(): IClass1State {
-  return { _prop1: "Hello!", _prop2: 0, prop3: undefined, _arr: undefined };
-}
-
 export interface IClass1Json {
   class1: true;
   state: { [key: string]: any };
 }
 
-function isClass1Json(value: any): value is IClass1Json {
+export function isClass1Json(value: any): value is IClass1Json {
   if (typeof value !== "object") {
     return false;
   }
 
   return Boolean(value.class1);
-}
-
-function getStateOptionsFromJson(json: IClass1Json): IClass1State {
-  const { state } = json;
-  const { _prop1, _prop2, prop3, _arr } = state;
-
-  return {
-    _prop1,
-    _prop2,
-    prop3,
-    _arr: _arr === undefined ? undefined : new ChangableArrayCollection(_arr),
-  };
 }
 
 export class Class1Serializable
@@ -58,11 +42,9 @@ export class Class1Serializable
   constructor(arg1: any, arg2?: any) {
     const fromJson = isClass1Json(arg1);
 
-    this._state = new ChangableObjectState<IClass1State, TClass1StateKey>(
-      fromJson ? getStateOptionsFromJson(arg1) : getDefaultStateOptions()
-    );
-
     if (fromJson) {
+      this._state = this._getStateFromJson(arg1);
+
       // init _prop4
       if (arg1 === 1) {
         this._prop4 = "goodbye";
@@ -72,6 +54,8 @@ export class Class1Serializable
 
       return;
     }
+
+    this._state = this._getDefaultState();
 
     this.disableChanges();
 
@@ -157,5 +141,69 @@ export class Class1Serializable
 
   setChanges(changes: [TObjectChange, TNestedChanges<TClass1StateKey>]): void {
     this._state.setChanges(changes);
+  }
+
+  // protected
+  protected _getStateOptionsFromJson(json: IClass1Json): IClass1State {
+    // const parentOptions = super._getStateOptionsFromJson(json);
+    const { state } = json;
+    const { _prop1, _prop2, prop3, _arr } = state;
+
+    const result = {
+      // ...parentOptions,
+      _prop1,
+      _prop2,
+      prop3,
+      _arr:
+        _arr === undefined
+          ? undefined
+          : new ChangableArrayCollection<number>(_arr),
+    };
+
+    return result;
+  }
+
+  protected _getStateFromJson(
+    json: IClass1Json
+  ): ChangableObjectState<IClass1State, TClass1StateKey> {
+    if (this._state) {
+      return this._state;
+    }
+
+    const stateOptions = this._getStateOptionsFromJson(json);
+
+    const result = new ChangableObjectState<IClass1State, TClass1StateKey>(
+      stateOptions
+    );
+
+    return result;
+  }
+
+  protected _getDefaultStateOptions(): IClass1State {
+    // const parentOptions = super._getDefaultStateOptions();
+    const result = {
+      _prop1: "Hello!",
+      _prop2: 0,
+      prop3: undefined,
+      _arr: undefined,
+    };
+    return result;
+  }
+
+  protected _getDefaultState(): ChangableObjectState<
+    IClass1State,
+    TClass1StateKey
+  > {
+    if (this._state) {
+      return this._state;
+    }
+
+    const stateOptions = this._getDefaultStateOptions();
+
+    const result = new ChangableObjectState<IClass1State, TClass1StateKey>(
+      stateOptions
+    );
+
+    return result;
   }
 }
