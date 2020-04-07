@@ -73,6 +73,7 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
     changes.forEach(([index, change]) => {
       // const changable = toChangable(this.get(index));
       // if (!changable) {
+      //   console.log(`this.get(${index})`, this.get(index));
       //   throw new Error(
       //     `setNestedChanges(): cannot set changes. Value at index=${index} is not IChangable`
       //   );

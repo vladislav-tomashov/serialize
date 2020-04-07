@@ -21,6 +21,9 @@ console.log("serializedB=serializedA", serializedB === serializedA);
 // console.log(JSON.stringify(a, undefined, 4));
 a.prop1.func1();
 a.prop1.prop3 = "test";
+a.prop31.prop1.prop3 = "Super Puper!!!";
+a.prop31.prop1.func1();
+a.prop32.get(1).prop1.prop3 = "WWWWWWWWWWWWW";
 // console.log("after");
 // console.log(JSON.stringify(a, undefined, 4));
 

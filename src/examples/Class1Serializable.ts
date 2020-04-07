@@ -1,14 +1,14 @@
 import { IClass1 } from "./IClass1";
 import { ChangableArrayCollection } from "../changables/changableCollections/ChangableArrayCollection";
-import {
-  IToJSON,
-  TNestedChanges,
-  TObjectChange,
-} from "../changables/changableObject/changableObject.interface";
+import { IToJSON } from "../changables/changableObject/changableObject.interface";
 import { IChangable } from "../changables/changables.interface";
-import { ChangableObjectState } from "../changables/changableObject/ChangableObjectState";
+import {
+  ChangableBase,
+  IBaseJson,
+  IBaseState,
+} from "../changables/changableObject/ChangableBase";
 
-export interface IClass1State {
+export interface IClass1State extends IBaseState {
   _prop1: string;
   _prop2: number;
   prop3?: string;
@@ -17,9 +17,8 @@ export interface IClass1State {
 
 export type TClass1StateKey = keyof IClass1State;
 
-export interface IClass1Json {
+export interface IClass1Json extends IBaseJson {
   class1: true;
-  state: { [key: string]: any };
 }
 
 export function isClass1Json(value: any): value is IClass1Json {
@@ -30,21 +29,17 @@ export function isClass1Json(value: any): value is IClass1Json {
   return Boolean(value.class1);
 }
 
-export class Class1Serializable
+export class Class1Serializable extends ChangableBase
   implements IClass1, IToJSON<IClass1Json>, IChangable<TClass1StateKey> {
-  protected _state: ChangableObjectState<IClass1State, TClass1StateKey>;
-
   // not serializable
   private _prop4: string;
 
   constructor(json: IClass1Json);
   constructor(arg1: number, arg2: string);
   constructor(arg1: any, arg2?: any) {
-    const fromJson = isClass1Json(arg1);
+    super(arg1);
 
-    if (fromJson) {
-      this._state = this._getStateFromJson(arg1);
-
+    if (this._isStateJson(arg1)) {
       // init _prop4
       if (arg1 === 1) {
         this._prop4 = "goodbye";
@@ -54,8 +49,6 @@ export class Class1Serializable
 
       return;
     }
-
-    this._state = this._getDefaultState();
 
     this.disableChanges();
 
@@ -117,40 +110,22 @@ export class Class1Serializable
 
   // implementation of interface IToJSON
   toJSON(): IClass1Json {
-    return { class1: true, state: this._state.toJSON() };
-  }
-
-  // implementation of interface IChangable
-  isChangable: true = true;
-
-  get changed(): boolean {
-    return this._state.changed;
-  }
-
-  disableChanges(): void {
-    this._state.disableChanges();
-  }
-
-  enableChanges(): void {
-    this._state.enableChanges();
-  }
-
-  getChanges(): [TObjectChange, TNestedChanges<TClass1StateKey>] {
-    return this._state.getChanges();
-  }
-
-  setChanges(changes: [TObjectChange, TNestedChanges<TClass1StateKey>]): void {
-    this._state.setChanges(changes);
+    return { ...super.toJSON(), class1: true };
   }
 
   // protected
+  protected _isStateJson(value: any): boolean {
+    return isClass1Json(value);
+  }
+
   protected _getStateOptionsFromJson(json: IClass1Json): IClass1State {
-    // const parentOptions = super._getStateOptionsFromJson(json);
+    const parentOptions = super._getStateOptionsFromJson(json);
+
     const { state } = json;
     const { _prop1, _prop2, prop3, _arr } = state;
 
     const result = {
-      // ...parentOptions,
+      ...parentOptions,
       _prop1,
       _prop2,
       prop3,
@@ -163,47 +138,15 @@ export class Class1Serializable
     return result;
   }
 
-  protected _getStateFromJson(
-    json: IClass1Json
-  ): ChangableObjectState<IClass1State, TClass1StateKey> {
-    if (this._state) {
-      return this._state;
-    }
-
-    const stateOptions = this._getStateOptionsFromJson(json);
-
-    const result = new ChangableObjectState<IClass1State, TClass1StateKey>(
-      stateOptions
-    );
-
-    return result;
-  }
-
   protected _getDefaultStateOptions(): IClass1State {
-    // const parentOptions = super._getDefaultStateOptions();
-    const result = {
+    const parentOptions = super._getDefaultStateOptions();
+
+    return {
+      ...parentOptions,
       _prop1: "Hello!",
       _prop2: 0,
       prop3: undefined,
       _arr: undefined,
     };
-    return result;
-  }
-
-  protected _getDefaultState(): ChangableObjectState<
-    IClass1State,
-    TClass1StateKey
-  > {
-    if (this._state) {
-      return this._state;
-    }
-
-    const stateOptions = this._getDefaultStateOptions();
-
-    const result = new ChangableObjectState<IClass1State, TClass1StateKey>(
-      stateOptions
-    );
-
-    return result;
   }
 }
