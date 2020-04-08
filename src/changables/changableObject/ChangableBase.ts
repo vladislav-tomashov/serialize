@@ -28,8 +28,8 @@ export class ChangableBase
   implements IChangable<IBaseStateKey>, IToJSON<IBaseJson> {
   protected _state: ChangableObjectState<IBaseState, IBaseStateKey>;
 
-  constructor(json?: IBaseJson) {
-    this._state = this._getStateFromJson(json);
+  constructor(json?: IBaseJson, ...rest: any[]) {
+    this._state = this._getStateFromJson(json, ...rest);
   }
 
   // implementation of interface IToJSON
@@ -65,7 +65,10 @@ export class ChangableBase
     return isStateJson(value);
   }
 
-  protected _getStateOptionsFromJson(json: IBaseJson): IBaseState {
+  protected _getStateOptionsFromJson(
+    json: IBaseJson,
+    ...rest: any[]
+  ): IBaseState {
     return {};
   }
 
@@ -74,7 +77,8 @@ export class ChangableBase
   }
 
   private _getStateFromJson(
-    json?: IBaseJson
+    json?: IBaseJson,
+    ...rest: any[]
   ): ChangableObjectState<IBaseState, IBaseStateKey> {
     if (this._state) {
       return this._state;
@@ -82,7 +86,7 @@ export class ChangableBase
 
     const stateOptions =
       json && this._isStateJson(json)
-        ? this._getStateOptionsFromJson(json)
+        ? this._getStateOptionsFromJson(json, ...rest)
         : this._getDefaultStateOptions();
 
     const result = new ChangableObjectState<IBaseState, IBaseStateKey>(

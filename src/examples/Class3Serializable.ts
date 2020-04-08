@@ -83,7 +83,7 @@ export class Class3Serializable extends Class2Serializable
     const { state } = json;
     const { prop31, prop32 } = state;
 
-    const result = {
+    return {
       ...parentOptions,
       prop31:
         prop31 === undefined
@@ -98,8 +98,6 @@ export class Class3Serializable extends Class2Serializable
               )
             ),
     };
-
-    return result;
   }
 
   protected _getDefaultStateOptions(): IClass3State {

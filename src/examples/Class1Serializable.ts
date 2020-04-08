@@ -120,11 +120,10 @@ export class Class1Serializable extends ChangableBase
 
   protected _getStateOptionsFromJson(json: IClass1Json): IClass1State {
     const parentOptions = super._getStateOptionsFromJson(json);
-
     const { state } = json;
     const { _prop1, _prop2, prop3, _arr } = state;
 
-    const result = {
+    return {
       ...parentOptions,
       _prop1,
       _prop2,
@@ -134,8 +133,6 @@ export class Class1Serializable extends ChangableBase
           ? undefined
           : new ChangableArrayCollection<number>(_arr),
     };
-
-    return result;
   }
 
   protected _getDefaultStateOptions(): IClass1State {

@@ -1,5 +1,6 @@
 import { Class2Serializable } from "./Class2Serializable";
 
+console.log("");
 console.log("========== Class2Serializable tests ==========");
 
 const a = new Class2Serializable();
@@ -39,3 +40,4 @@ b.setChanges(JSON.parse(serializedChanges));
 // // console.log("b after changes", b);
 console.log("b after changes JSON", JSON.stringify(b));
 console.log("serializedB=serializedA", JSON.stringify(a) === JSON.stringify(b));
+console.log("");

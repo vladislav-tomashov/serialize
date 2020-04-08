@@ -84,7 +84,7 @@ export class Class2Serializable extends ChangableBase
     const { state } = json;
     const { prop1, prop2 } = state;
 
-    const result = {
+    return {
       ...parentOptions,
       prop1:
         prop1 === undefined
@@ -99,8 +99,6 @@ export class Class2Serializable extends ChangableBase
               )
             ),
     };
-
-    return result;
   }
 
   protected _getDefaultStateOptions(): IClass2State {
