@@ -30,7 +30,7 @@ export type TCollectionSpliceChange<T> = [
   CollectionChangeType.Splice,
   number,
   number | undefined,
-  T[] | undefined
+  T[] | undefined,
 ];
 
 export type TCollectionChange<T> =

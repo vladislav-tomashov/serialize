@@ -1,7 +1,9 @@
-import { IGetProperty, TPropertyChange } from "./changableObject.interface";
+import { IGetProperty } from "./changable-object.interface";
+import { TPropertyChange } from "../serialize.interface";
 
 export class ObjectChanges<T, K extends keyof T> {
   private _log = new Set<K>();
+
   private _disabled = false;
 
   get length() {
@@ -35,7 +37,7 @@ export class ObjectChanges<T, K extends keyof T> {
 
   getChanges(source: IGetProperty<T, K>): TPropertyChange<any>[] {
     const result = Array.from(this._log).map(
-      (x) => <TPropertyChange<any>>[x, source.getProperty(x)]
+      (x) => [x, source.getProperty(x)] as TPropertyChange<any>,
     );
 
     return result;

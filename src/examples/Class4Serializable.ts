@@ -1,13 +1,9 @@
 import { IClass3 } from "./IClass3";
-import {
-  ChangableBase,
-  IBaseJson,
-  IBaseState,
-} from "../changables/changableObject/ChangableBase";
 import { IClass4 } from "./IClass4";
-import { IToJSON } from "../changables/changableObject/changableObject.interface";
-import { IChangable } from "../changables/changables.interface";
 import { Class3Serializable } from "./Class3Serializable";
+import { IBaseState, IBaseJson, ChangableBase } from "../serialize/changable-object/ChangableBase";
+import { IToJSON } from "../serialize/changable-object/changable-object.interface";
+import { IChangable } from "../serialize/serialize.interface";
 
 export interface IClass4State extends IBaseState {
   ref?: Class3Serializable;
@@ -31,7 +27,9 @@ export function isClass4Json(value: any): value is IClass4Json {
 export class Class4Serializable extends ChangableBase
   implements IClass4, IToJSON<IClass4Json>, IChangable<TClass4StateKey> {
   constructor(json: IClass4Json, pRef: Class3Serializable);
+
   constructor(pRef: Class3Serializable, pProp41: string);
+
   constructor(pRef: any, pProp41: any) {
     super(pRef, pProp41);
 
@@ -50,7 +48,7 @@ export class Class4Serializable extends ChangableBase
 
   // Proxied state properties
   public get ref() {
-    return <IClass3>this._state.getProperty("ref");
+    return this._state.getProperty("ref") as IClass3;
   }
 
   public set ref(value: IClass3) {
@@ -58,7 +56,7 @@ export class Class4Serializable extends ChangableBase
   }
 
   public get prop41() {
-    return <string>this._state.getProperty("prop41");
+    return this._state.getProperty("prop41") as string;
   }
 
   public set prop41(value: string) {
@@ -71,6 +69,7 @@ export class Class4Serializable extends ChangableBase
   }
 
   // protected
+  // eslint-disable-next-line class-methods-use-this
   protected _isStateJson(value: any): boolean {
     return isClass4Json(value);
   }

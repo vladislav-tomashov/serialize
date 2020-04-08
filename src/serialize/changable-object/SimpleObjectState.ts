@@ -1,8 +1,7 @@
-import { IObjectState } from "./changableObject.interface";
+import { IObjectState } from "./changable-object.interface";
 
 export class SimpleObjectState<T extends object, K extends keyof T>
   implements IObjectState<T, K> {
-
   constructor(protected _state: T) {}
 
   // implementation of interface IObjectState

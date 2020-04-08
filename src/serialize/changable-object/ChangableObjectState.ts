@@ -1,12 +1,14 @@
+import { IToJSON } from "./changable-object.interface";
+import { ObjectChanges } from "./ObjectChanges";
 import {
-  IToJSON,
+  IChangable,
+  TChanges,
+  toChangable,
   INestedChanges,
   IOwnChanges,
   TNestedChanges,
   TObjectChange,
-} from "./changableObject.interface";
-import { ObjectChanges } from "./ObjectChanges";
-import { IChangable, TChanges, toChangable } from "../changables.interface";
+} from "../serialize.interface";
 import { SimpleObjectState } from "./SimpleObjectState";
 
 export class ChangableObjectState<T extends object, K extends keyof T>
@@ -17,6 +19,7 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     IOwnChanges,
     IToJSON<{ [key: string]: any }> {
   private _changes = new ObjectChanges<T, K>();
+
   private _cacheStateKeys?: K[];
 
   // Overrides
@@ -46,7 +49,7 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   getNestedChanges(): TNestedChanges<K> {
     return this.getChangableEntries()
       .filter(([, x]) => x.changed)
-      .map(([prop, x]) => <[K, TChanges<any>]>[prop, x.getChanges()]);
+      .map(([prop, x]) => [prop, x.getChanges()] as [K, TChanges<any>]);
   }
 
   setNestedChanges(changes: TNestedChanges<K>): void {
@@ -61,13 +64,13 @@ export class ChangableObjectState<T extends object, K extends keyof T>
       //     )}`
       //   );
       // }
-      const changable = <IChangable<K>>(<unknown>this._state[prop]);
+      const changable = (this._state[prop] as unknown) as IChangable<K>;
       changable.setChanges(change);
     });
   }
 
   getChangableEntries(): [K, IChangable<any>][] {
-    const result = <[K, IChangable<any>][]>[];
+    const result = [] as [K, IChangable<any>][];
 
     this._stateKeys.forEach((prop) => {
       const changable = toChangable(this._state[prop]);
@@ -101,7 +104,7 @@ export class ChangableObjectState<T extends object, K extends keyof T>
 
     changes.forEach((change) => {
       const [key, value] = change;
-      const prop = <K>key;
+      const prop = key as K;
       this._state[prop] = value;
     });
 
@@ -137,7 +140,7 @@ export class ChangableObjectState<T extends object, K extends keyof T>
 
   // implementation of interface IToJSON
   toJSON(): { [keys: string]: any } {
-    const result = <T>{};
+    const result = {} as T;
 
     this._stateKeys.forEach((prop) => {
       result[prop] = this._state[prop];
@@ -149,9 +152,9 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   // private and protected members
   protected get _stateKeys(): K[] {
     if (!this._cacheStateKeys) {
-      this._cacheStateKeys = Object.keys(this._state).map((key) => <K>key);
+      this._cacheStateKeys = Object.keys(this._state).map((key) => key as K);
     }
 
-    return <K[]>this._cacheStateKeys;
+    return this._cacheStateKeys as K[];
   }
 }

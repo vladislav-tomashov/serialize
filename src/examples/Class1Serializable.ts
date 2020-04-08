@@ -1,12 +1,12 @@
 import { IClass1 } from "./IClass1";
-import { ChangableArrayCollection } from "../changables/changableCollections/ChangableArrayCollection";
-import { IToJSON } from "../changables/changableObject/changableObject.interface";
-import { IChangable } from "../changables/changables.interface";
 import {
-  ChangableBase,
-  IBaseJson,
   IBaseState,
-} from "../changables/changableObject/ChangableBase";
+  IBaseJson,
+  ChangableBase,
+} from "../serialize/changable-object/ChangableBase";
+import { ChangableArrayCollection } from "../serialize/changable-collections/ChangableArrayCollection";
+import { IToJSON } from "../serialize/changable-object/changable-object.interface";
+import { IChangable } from "../serialize/serialize.interface";
 
 export interface IClass1State extends IBaseState {
   _prop1: string;
@@ -35,7 +35,9 @@ export class Class1Serializable extends ChangableBase
   private _prop4: string;
 
   constructor(json: IClass1Json);
+
   constructor(arg1: number, arg2: string);
+
   constructor(arg1: any, arg2?: any) {
     super(arg1);
 
@@ -71,13 +73,13 @@ export class Class1Serializable extends ChangableBase
   // Implementation of interface IClass1
   // copied from Class1
   func1(): void {
-    this._prop2 = this._prop2 + 1;
+    this._prop2 += 1;
     this._arr.push(10);
   }
 
   // Proxied state properties
   private get _prop1() {
-    return <string>this._state.getProperty("_prop1");
+    return this._state.getProperty("_prop1") as string;
   }
 
   private set _prop1(value: string) {
@@ -85,7 +87,7 @@ export class Class1Serializable extends ChangableBase
   }
 
   protected get _prop2() {
-    return <number>this._state.getProperty("_prop2");
+    return this._state.getProperty("_prop2") as number;
   }
 
   protected set _prop2(value: number) {
@@ -93,7 +95,7 @@ export class Class1Serializable extends ChangableBase
   }
 
   get prop3() {
-    return <string>this._state.getProperty("prop3");
+    return this._state.getProperty("prop3") as string;
   }
 
   set prop3(value: string) {
@@ -101,7 +103,7 @@ export class Class1Serializable extends ChangableBase
   }
 
   private get _arr() {
-    return <ChangableArrayCollection<number>>this._state.getProperty("_arr");
+    return this._state.getProperty("_arr") as ChangableArrayCollection<number>;
   }
 
   private set _arr(value: ChangableArrayCollection<number>) {
@@ -114,6 +116,7 @@ export class Class1Serializable extends ChangableBase
   }
 
   // protected
+  // eslint-disable-next-line class-methods-use-this
   protected _isStateJson(value: any): boolean {
     return isClass1Json(value);
   }

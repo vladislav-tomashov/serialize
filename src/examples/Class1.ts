@@ -1,11 +1,13 @@
 import { IClass1 } from "./IClass1";
 
 export class Class1 implements IClass1 {
-  private _prop1: string = "Hello!"; // serialize
+  private _prop1 = "Hello!"; // serialize
+
   private _prop4: string; // do not serialize
+
   private _arr: number[]; // serialize
 
-  protected _prop2: number = 0; // serialize
+  protected _prop2 = 0; // serialize
 
   prop3: string; // serialize
 
@@ -24,7 +26,7 @@ export class Class1 implements IClass1 {
   }
 
   func1(): void {
-    this._prop2 = this._prop2 + 1;
+    this._prop2 += 1;
     this._arr.push(10);
   }
 }

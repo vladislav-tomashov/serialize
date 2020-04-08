@@ -1,10 +1,10 @@
-import { IChangable } from "../changables.interface";
-import { ChangableObjectState } from "./ChangableObjectState";
 import {
+  IChangable,
   TObjectChange,
   TNestedChanges,
-  IToJSON,
-} from "./changableObject.interface";
+} from "../serialize.interface";
+import { ChangableObjectState } from "./ChangableObjectState";
+import { IToJSON } from "./changable-object.interface";
 
 export interface IBaseState {
   [key: string]: any;
@@ -61,10 +61,12 @@ export class ChangableBase
   }
 
   // protected
+  // eslint-disable-next-line class-methods-use-this
   protected _isStateJson(value: any): boolean {
     return isStateJson(value);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected _getStateOptionsFromJson(
     json: IBaseJson,
     ...rest: any[]
@@ -72,6 +74,7 @@ export class ChangableBase
     return {};
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected _getDefaultStateOptions(): IBaseState {
     return {};
   }
@@ -90,7 +93,7 @@ export class ChangableBase
         : this._getDefaultStateOptions();
 
     const result = new ChangableObjectState<IBaseState, IBaseStateKey>(
-      stateOptions
+      stateOptions,
     );
 
     return result;

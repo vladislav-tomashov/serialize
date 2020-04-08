@@ -95,7 +95,7 @@ export interface IArrayCollection<T> {
    */
   every(
     callbackfn: (value: T, index: number, array: T[]) => unknown,
-    thisArg?: any
+    thisArg?: any,
   ): boolean;
   /**
    * Determines whether the specified callback function returns true for any element of an array.
@@ -107,7 +107,7 @@ export interface IArrayCollection<T> {
    */
   some(
     callbackfn: (value: T, index: number, array: T[]) => unknown,
-    thisArg?: any
+    thisArg?: any,
   ): boolean;
   /**
    * Performs the specified action for each element in an array.
@@ -116,7 +116,7 @@ export interface IArrayCollection<T> {
    */
   forEach(
     callbackfn: (value: T, index: number, array: T[]) => void,
-    thisArg?: any
+    thisArg?: any,
   ): void;
   /**
    * Calls a defined callback function on each element of an array, and returns an array that contains the results.
@@ -125,7 +125,7 @@ export interface IArrayCollection<T> {
    */
   map<U>(
     callbackfn: (value: T, index: number, array: T[]) => U,
-    thisArg?: any
+    thisArg?: any,
   ): U[];
   /**
    * Returns the elements of an array that meet the condition specified in a callback function.
@@ -134,7 +134,7 @@ export interface IArrayCollection<T> {
    */
   filter<S extends T>(
     callbackfn: (value: T, index: number, array: T[]) => value is S,
-    thisArg?: any
+    thisArg?: any,
   ): S[];
   /**
    * Returns the elements of an array that meet the condition specified in a callback function.
@@ -143,7 +143,7 @@ export interface IArrayCollection<T> {
    */
   filter(
     callbackfn: (value: T, index: number, array: T[]) => unknown,
-    thisArg?: any
+    thisArg?: any,
   ): T[];
   /**
    * Calls the specified callback function for all the elements in an array. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
@@ -155,17 +155,17 @@ export interface IArrayCollection<T> {
       previousValue: T,
       currentValue: T,
       currentIndex: number,
-      array: T[]
-    ) => T
+      array: T[],
+    ) => T,
   ): T;
   reduce(
     callbackfn: (
       previousValue: T,
       currentValue: T,
       currentIndex: number,
-      array: T[]
+      array: T[],
     ) => T,
-    initialValue: T
+    initialValue: T,
   ): T;
   /**
    * Calls the specified callback function for all the elements in an array. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
@@ -177,9 +177,9 @@ export interface IArrayCollection<T> {
       previousValue: U,
       currentValue: T,
       currentIndex: number,
-      array: T[]
+      array: T[],
     ) => U,
-    initialValue: U
+    initialValue: U,
   ): U;
   /**
    * Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
@@ -191,17 +191,17 @@ export interface IArrayCollection<T> {
       previousValue: T,
       currentValue: T,
       currentIndex: number,
-      array: T[]
-    ) => T
+      array: T[],
+    ) => T,
   ): T;
   reduceRight(
     callbackfn: (
       previousValue: T,
       currentValue: T,
       currentIndex: number,
-      array: T[]
+      array: T[],
     ) => T,
-    initialValue: T
+    initialValue: T,
   ): T;
   /**
    * Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
@@ -213,9 +213,9 @@ export interface IArrayCollection<T> {
       previousValue: U,
       currentValue: T,
       currentIndex: number,
-      array: T[]
+      array: T[],
     ) => U,
-    initialValue: U
+    initialValue: U,
   ): U;
 
   toArray(): T[];

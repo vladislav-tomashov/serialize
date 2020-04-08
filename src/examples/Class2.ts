@@ -4,6 +4,7 @@ import { ArrayCollection } from "../collections/ArrayCollection";
 
 export class Class2 implements IClass2 {
   prop1: Class1;
+
   prop2: ArrayCollection<Class1>;
 
   constructor() {

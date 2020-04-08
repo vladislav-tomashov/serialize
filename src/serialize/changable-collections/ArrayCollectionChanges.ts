@@ -10,7 +10,7 @@ import {
   TCollectionUnshiftChange,
   TCollectionShiftChange,
   TCollectionSpliceChange,
-} from "./changableCollections.interface";
+} from "./changable-collections.interface";
 
 type TPushChange<T> = [CollectionChangeType.Push, T[]];
 
@@ -32,7 +32,7 @@ type TSpliceChange<T> = [
   CollectionChangeType.Splice,
   number,
   number | undefined,
-  T[] | undefined
+  T[] | undefined,
 ];
 
 type TChange<T> =
@@ -46,8 +46,38 @@ type TChange<T> =
   | TShiftChange
   | TSpliceChange<T>;
 
+function getChange<T>(change: TChange<T>, source: T[]): TCollectionChange<T> {
+  const [changeType] = change;
+
+  switch (changeType) {
+    case CollectionChangeType.Push:
+      return change as TCollectionPushChange<T>;
+    case CollectionChangeType.Unshift:
+      return change as TCollectionUnshiftChange<T>;
+    case CollectionChangeType.Pop:
+      return change as TCollectionPopChange;
+    case CollectionChangeType.Shift:
+      return change as TCollectionShiftChange;
+    case CollectionChangeType.Clear:
+      return [CollectionChangeType.Clear, source] as TCollectionClearChange<T>;
+    case CollectionChangeType.Sort:
+      return [CollectionChangeType.Sort, source] as TCollectionSortChange<T>;
+    case CollectionChangeType.Reverse:
+      return [CollectionChangeType.Reverse, source] as TCollectionReverseChange<
+        T
+      >;
+    case CollectionChangeType.Set:
+      return change as TCollectionSetChange<T>;
+    case CollectionChangeType.Splice:
+      return change as TCollectionSpliceChange<T>;
+    default:
+      throw new Error(`Unknown array change type=${changeType}`);
+  }
+}
+
 export class ArrayCollectionChanges<T> {
   private _log: Array<TChange<T>> = [];
+
   private _disabled = false;
 
   get length() {
@@ -165,42 +195,10 @@ export class ArrayCollectionChanges<T> {
   }
 
   getChanges(source: T[]): TCollectionChange<T>[] {
-    return this._log.map((x) => this._getChange(x, source));
+    return this._log.map((x) => getChange(x, source));
   }
 
   // private
-  private _getChange(change: TChange<T>, source: T[]): TCollectionChange<T> {
-    const [changeType] = change;
-
-    switch (changeType) {
-      case CollectionChangeType.Push:
-        return change as TCollectionPushChange<T>;
-      case CollectionChangeType.Unshift:
-        return change as TCollectionUnshiftChange<T>;
-      case CollectionChangeType.Pop:
-        return change as TCollectionPopChange;
-      case CollectionChangeType.Shift:
-        return change as TCollectionShiftChange;
-      case CollectionChangeType.Clear:
-        return [CollectionChangeType.Clear, source] as TCollectionClearChange<
-          T
-        >;
-      case CollectionChangeType.Sort:
-        return [CollectionChangeType.Sort, source] as TCollectionSortChange<T>;
-      case CollectionChangeType.Reverse:
-        return [
-          CollectionChangeType.Reverse,
-          source,
-        ] as TCollectionReverseChange<T>;
-      case CollectionChangeType.Set:
-        return change as TCollectionSetChange<T>;
-      case CollectionChangeType.Splice:
-        return change as TCollectionSpliceChange<T>;
-      default:
-        throw new Error(`Unknown array change type=${changeType}`);
-    }
-  }
-
   private _clear() {
     if (this._log.length > 0) {
       this._log = [];

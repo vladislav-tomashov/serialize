@@ -1,13 +1,13 @@
 import { IClass2 } from "./IClass2";
-import { ChangableArrayCollection } from "../changables/changableCollections/ChangableArrayCollection";
-import { IToJSON } from "../changables/changableObject/changableObject.interface";
-import { IChangable } from "../changables/changables.interface";
 import { Class1Serializable, IClass1Json } from "./Class1Serializable";
 import {
-  ChangableBase,
-  IBaseJson,
   IBaseState,
-} from "../changables/changableObject/ChangableBase";
+  IBaseJson,
+  ChangableBase,
+} from "../serialize/changable-object/ChangableBase";
+import { ChangableArrayCollection } from "../serialize/changable-collections/ChangableArrayCollection";
+import { IToJSON } from "../serialize/changable-object/changable-object.interface";
+import { IChangable } from "../serialize/serialize.interface";
 
 export interface IClass2State extends IBaseState {
   prop1?: Class1Serializable;
@@ -31,7 +31,9 @@ export function isClass2Json(value: any): value is IClass2Json {
 export class Class2Serializable extends ChangableBase
   implements IClass2, IToJSON<IClass2Json>, IChangable<TClass2StateKey> {
   constructor();
+
   constructor(json: IClass2Json);
+
   constructor(json?: any) {
     super(json);
 
@@ -52,7 +54,7 @@ export class Class2Serializable extends ChangableBase
 
   // Proxied state properties
   public get prop1() {
-    return <Class1Serializable>this._state.getProperty("prop1");
+    return this._state.getProperty("prop1") as Class1Serializable;
   }
 
   public set prop1(value: Class1Serializable) {
@@ -60,9 +62,9 @@ export class Class2Serializable extends ChangableBase
   }
 
   public get prop2() {
-    return <ChangableArrayCollection<Class1Serializable>>(
-      this._state.getProperty("prop2")
-    );
+    return this._state.getProperty("prop2") as ChangableArrayCollection<
+      Class1Serializable
+    >;
   }
 
   public set prop2(value: ChangableArrayCollection<Class1Serializable>) {
@@ -75,6 +77,7 @@ export class Class2Serializable extends ChangableBase
   }
 
   // protected
+  // eslint-disable-next-line class-methods-use-this
   protected _isStateJson(value: any): boolean {
     return isClass2Json(value);
   }
@@ -89,13 +92,13 @@ export class Class2Serializable extends ChangableBase
       prop1:
         prop1 === undefined
           ? undefined
-          : new Class1Serializable(<IClass1Json>prop1),
+          : new Class1Serializable(prop1 as IClass1Json),
       prop2:
         prop2 === undefined
           ? undefined
           : new ChangableArrayCollection<Class1Serializable>(
-              (<IClass1Json[]>prop2).map(
-                (x) => new Class1Serializable(<IClass1Json>x)
+              (prop2 as IClass1Json[]).map(
+                (x) => new Class1Serializable(x as IClass1Json)
               )
             ),
     };

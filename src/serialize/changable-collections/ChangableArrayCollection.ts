@@ -5,7 +5,10 @@ import {
   isChangable,
   TChanges,
   toChangable,
-} from "../changables.interface";
+  IOwnChanges,
+  INestedChanges,
+  TNestedChanges,
+} from "../serialize.interface";
 import {
   TCollectionChange,
   CollectionChangeType,
@@ -16,12 +19,7 @@ import {
   TCollectionSortChange,
   TCollectionReverseChange,
   TCollectionSetChange,
-} from "./changableCollections.interface";
-import {
-  IOwnChanges,
-  INestedChanges,
-  TNestedChanges,
-} from "../changableObject/changableObject.interface";
+} from "./changable-collections.interface";
 
 export class ChangableArrayCollection<T> extends ArrayCollection<T>
   implements IChangable<number>, IOwnChanges, INestedChanges<number> {
@@ -66,7 +64,7 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
   getNestedChanges(): TNestedChanges<number> {
     return this.getChangableEntries()
       .filter(([, x]) => x.changed)
-      .map(([prop, x]) => <[number, TChanges<any>]>[prop, x.getChanges()]);
+      .map(([prop, x]) => [prop, x.getChanges()] as [number, TChanges<any>]);
   }
 
   setNestedChanges(changes: TNestedChanges<number>): void {
@@ -78,7 +76,7 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
       //     `setNestedChanges(): cannot set changes. Value at index=${index} is not IChangable`
       //   );
       // }
-      const changable = <IChangable<number>>(<unknown>this.get(index));
+      const changable = (this.get(index) as unknown) as IChangable<number>;
       changable.setChanges(change);
     });
   }
@@ -127,7 +125,10 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
     this._changes.registerSet(index, value);
 
     const changable = toChangable(super.get(index));
-    changable?.disableChanges();
+
+    if (changable) {
+      changable.disableChanges();
+    }
   }
 
   pop(): T | undefined {
@@ -141,7 +142,9 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
     this._changes.registerPush(items);
 
     if (isChangable(items[0])) {
-      items.forEach((x) => (<IChangable<number>>(<unknown>x)).disableChanges());
+      items.forEach((x) =>
+        ((x as unknown) as IChangable<number>).disableChanges(),
+      );
     }
 
     return result;
@@ -171,7 +174,9 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
     this._changes.registerUnshift(items);
 
     if (isChangable(items[0])) {
-      items.forEach((x) => (<IChangable<number>>(<unknown>x)).disableChanges());
+      items.forEach((x) =>
+        ((x as unknown) as IChangable<number>).disableChanges(),
+      );
     }
 
     return result;
@@ -184,13 +189,17 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
   }
 
   splice(start: number, deleteCount?: number | undefined): T[];
+
   splice(start: number, deleteCount: number, ...items: T[]): T[];
+
   splice(start: any, deleteCount?: any, ...rest: any[]) {
     const result = super.splice(start, deleteCount, ...rest);
     this._changes.registerSplice(start, deleteCount, rest);
 
     if (rest && isChangable(rest[0])) {
-      rest.forEach((x) => (<IChangable<number>>(<unknown>x)).disableChanges());
+      rest.forEach((x) =>
+        ((x as unknown) as IChangable<number>).disableChanges(),
+      );
     }
 
     return result;

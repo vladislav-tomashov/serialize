@@ -1,4 +1,3 @@
-
 import { IClass2 } from "./IClass2";
 import { IArrayCollection } from "../collections/collections.interface";
 

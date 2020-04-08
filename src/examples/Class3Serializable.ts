@@ -1,12 +1,12 @@
-import { ChangableArrayCollection } from "../changables/changableCollections/ChangableArrayCollection";
-import { IToJSON } from "../changables/changableObject/changableObject.interface";
-import { IChangable } from "../changables/changables.interface";
 import {
   IClass2Json,
   Class2Serializable,
   IClass2State,
 } from "./Class2Serializable";
 import { IClass3 } from "./IClass3";
+import { ChangableArrayCollection } from "../serialize/changable-collections/ChangableArrayCollection";
+import { IToJSON } from "../serialize/changable-object/changable-object.interface";
+import { IChangable } from "../serialize/serialize.interface";
 
 export interface IClass3State extends IClass2State {
   prop31?: Class2Serializable;
@@ -30,7 +30,9 @@ export function isClass3Json(value: any): value is IClass3Json {
 export class Class3Serializable extends Class2Serializable
   implements IClass3, IToJSON<IClass3Json>, IChangable<TClass3StateKey> {
   constructor();
+
   constructor(json: IClass3Json);
+
   constructor(json?: any) {
     super(json);
 
@@ -51,7 +53,7 @@ export class Class3Serializable extends Class2Serializable
 
   // Proxied stateful properties
   public get prop31() {
-    return <Class2Serializable>this._state.getProperty("prop31");
+    return this._state.getProperty("prop31") as Class2Serializable;
   }
 
   public set prop31(value: Class2Serializable) {
@@ -59,9 +61,9 @@ export class Class3Serializable extends Class2Serializable
   }
 
   public get prop32() {
-    return <ChangableArrayCollection<Class2Serializable>>(
-      this._state.getProperty("prop32")
-    );
+    return this._state.getProperty("prop32") as ChangableArrayCollection<
+      Class2Serializable
+    >;
   }
 
   public set prop32(value: ChangableArrayCollection<Class2Serializable>) {
@@ -74,6 +76,7 @@ export class Class3Serializable extends Class2Serializable
   }
 
   // protected
+  // eslint-disable-next-line class-methods-use-this
   protected _isStateJson(value: any): boolean {
     return isClass3Json(value);
   }
@@ -88,13 +91,13 @@ export class Class3Serializable extends Class2Serializable
       prop31:
         prop31 === undefined
           ? undefined
-          : new Class2Serializable(<IClass2Json>prop31),
+          : new Class2Serializable(prop31 as IClass2Json),
       prop32:
         prop32 === undefined
           ? undefined
           : new ChangableArrayCollection<Class2Serializable>(
-              (<IClass2Json[]>prop32).map(
-                (x) => new Class2Serializable(<IClass2Json>x)
+              (prop32 as IClass2Json[]).map(
+                (x) => new Class2Serializable(x as IClass2Json)
               )
             ),
     };

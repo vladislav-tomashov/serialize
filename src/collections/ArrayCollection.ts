@@ -8,7 +8,9 @@ class ArrayCollection<T> implements IArrayCollection<T> {
   protected _array: Array<T> = [];
 
   constructor(value: Array<T>);
+
   constructor(value: IToArray<T>);
+
   constructor(value: any) {
     const array = Array.isArray(value) ? value : value.toArray();
     this._array = array;
@@ -27,7 +29,9 @@ class ArrayCollection<T> implements IArrayCollection<T> {
   }
 
   concat(...items: ConcatArray<T>[]): T[];
+
   concat(...items: (T | ConcatArray<T>)[]): T[];
+
   concat(...items: any[]) {
     return this._array.concat(...items);
   }
@@ -54,7 +58,9 @@ class ArrayCollection<T> implements IArrayCollection<T> {
   }
 
   splice(start: number, deleteCount?: number | undefined): T[];
+
   splice(start: number, deleteCount: number, ...items: T[]): T[];
+
   splice(start: any, deleteCount?: any, ...rest: any[]) {
     return this._array.splice(start, deleteCount, ...rest);
   }
@@ -73,100 +79,110 @@ class ArrayCollection<T> implements IArrayCollection<T> {
 
   every(
     callbackfn: (value: T, index: number, array: T[]) => unknown,
-    thisArg?: any
+    thisArg?: any,
   ): boolean {
-    return this._array.every(callbackfn);
+    return this._array.every(callbackfn, thisArg);
   }
 
   some(
     callbackfn: (value: T, index: number, array: T[]) => unknown,
-    thisArg?: any
+    thisArg?: any,
   ): boolean {
-    return this._array.some(callbackfn);
+    return this._array.some(callbackfn, thisArg);
   }
 
   forEach(
     callbackfn: (value: T, index: number, array: T[]) => void,
-    thisArg?: any
+    thisArg?: any,
   ): void {
-    return this._array.forEach(callbackfn);
+    return this._array.forEach(callbackfn, thisArg);
   }
 
   map<U>(
     callbackfn: (value: T, index: number, array: T[]) => U,
-    thisArg?: any
+    thisArg?: any,
   ): U[] {
-    return this._array.map(callbackfn);
+    return this._array.map(callbackfn, thisArg);
   }
 
   filter<S extends T>(
     callbackfn: (value: T, index: number, array: T[]) => value is S,
-    thisArg?: any
+    thisArg?: any,
   ): S[];
+
   filter(
     callbackfn: (value: T, index: number, array: T[]) => unknown,
-    thisArg?: any
+    thisArg?: any,
   ): T[];
+
   filter(callbackfn: any, thisArg?: any) {
-    return this._array.filter(callbackfn);
+    return this._array.filter(callbackfn, thisArg);
   }
+
   reduce(
     callbackfn: (
       previousValue: T,
       currentValue: T,
       currentIndex: number,
-      array: T[]
-    ) => T
-  ): T;
-  reduce(
-    callbackfn: (
-      previousValue: T,
-      currentValue: T,
-      currentIndex: number,
-      array: T[]
+      array: T[],
     ) => T,
-    initialValue: T
   ): T;
+
+  reduce(
+    callbackfn: (
+      previousValue: T,
+      currentValue: T,
+      currentIndex: number,
+      array: T[],
+    ) => T,
+    initialValue: T,
+  ): T;
+
   reduce<U>(
     callbackfn: (
       previousValue: U,
       currentValue: T,
       currentIndex: number,
-      array: T[]
+      array: T[],
     ) => U,
-    initialValue: U
+    initialValue: U,
   ): U;
+
   reduce(callbackfn: any, initialValue?: any) {
-    return this._array.reduce(callbackfn);
+    return this._array.reduce(callbackfn, initialValue);
   }
+
   reduceRight(
     callbackfn: (
       previousValue: T,
       currentValue: T,
       currentIndex: number,
-      array: T[]
-    ) => T
-  ): T;
-  reduceRight(
-    callbackfn: (
-      previousValue: T,
-      currentValue: T,
-      currentIndex: number,
-      array: T[]
+      array: T[],
     ) => T,
-    initialValue: T
   ): T;
+
+  reduceRight(
+    callbackfn: (
+      previousValue: T,
+      currentValue: T,
+      currentIndex: number,
+      array: T[],
+    ) => T,
+    initialValue: T,
+  ): T;
+
   reduceRight<U>(
     callbackfn: (
       previousValue: U,
       currentValue: T,
       currentIndex: number,
-      array: T[]
+      array: T[],
     ) => U,
-    initialValue: U
+    initialValue: U,
   ): U;
+
   reduceRight(callbackfn: any, initialValue?: any) {
-    return this._array.reduceRight(callbackfn);
+    return this._array.reduceRight(callbackfn, initialValue);
   }
 
   toArray() {
