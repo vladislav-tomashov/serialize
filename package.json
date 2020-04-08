@@ -10,7 +10,7 @@
     "start": "concurrently npm:start:*"
   },
   "keywords": [],
-  "author": "",
+  "author": "Vlad Tomashov",
   "license": "ISC",
   "dependencies": {
     "concurrently": "^5.1.0",
