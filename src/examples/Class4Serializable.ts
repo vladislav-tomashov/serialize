@@ -1,16 +1,17 @@
 import { IClass3 } from "./IClass3";
 import { IClass4 } from "./IClass4";
 import { Class3Serializable } from "./Class3Serializable";
-import { IBaseState, IBaseJson, ChangableBase } from "../serialize/changable-object/ChangableBase";
+import {
+  IBaseState,
+  IBaseJson,
+  ChangableBase,
+} from "../serialize/changable-object/ChangableBase";
 import { IToJSON } from "../serialize/changable-object/changable-object.interface";
-import { IChangable } from "../serialize/serialize.interface";
 
 export interface IClass4State extends IBaseState {
-  ref?: Class3Serializable;
-  prop41?: string;
+  ref: Class3Serializable;
+  prop41: string;
 }
-
-export type TClass4StateKey = keyof IClass4State;
 
 export interface IClass4Json extends IBaseJson {
   class4: true;
@@ -25,7 +26,7 @@ export function isClass4Json(value: any): value is IClass4Json {
 }
 
 export class Class4Serializable extends ChangableBase
-  implements IClass4, IToJSON<IClass4Json>, IChangable<TClass4StateKey> {
+  implements IClass4, IToJSON<IClass4Json> {
   constructor(json: IClass4Json, pRef: Class3Serializable);
 
   constructor(pRef: Class3Serializable, pProp41: string);
@@ -74,11 +75,11 @@ export class Class4Serializable extends ChangableBase
     return isClass4Json(value);
   }
 
-  protected _getStateOptionsFromJson(
+  protected _getStatePropsFromJson(
     json: IClass4Json,
     pRef: Class3Serializable
   ): IClass4State {
-    const parentOptions = super._getStateOptionsFromJson(json);
+    const parentOptions = super._getStatePropsFromJson(json);
 
     const { state } = json;
     const { prop41 } = state;
@@ -87,16 +88,6 @@ export class Class4Serializable extends ChangableBase
       ...parentOptions,
       ref: pRef,
       prop41,
-    };
-  }
-
-  protected _getDefaultStateOptions(): IClass4State {
-    const parentOptions = super._getDefaultStateOptions();
-
-    return {
-      ...parentOptions,
-      ref: undefined,
-      prop41: undefined,
     };
   }
 }

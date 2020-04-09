@@ -6,16 +6,13 @@ import {
 } from "../serialize/changable-object/ChangableBase";
 import { ChangableArrayCollection } from "../serialize/changable-collections/ChangableArrayCollection";
 import { IToJSON } from "../serialize/changable-object/changable-object.interface";
-import { IChangable } from "../serialize/serialize.interface";
 
 export interface IClass1State extends IBaseState {
   _prop1: string;
   _prop2: number;
-  prop3?: string;
-  _arr?: ChangableArrayCollection<number>;
+  prop3: string;
+  _arr: ChangableArrayCollection<number>;
 }
-
-export type TClass1StateKey = keyof IClass1State;
 
 export interface IClass1Json extends IBaseJson {
   class1: true;
@@ -30,7 +27,7 @@ export function isClass1Json(value: any): value is IClass1Json {
 }
 
 export class Class1Serializable extends ChangableBase
-  implements IClass1, IToJSON<IClass1Json>, IChangable<TClass1StateKey> {
+  implements IClass1, IToJSON<IClass1Json> {
   // not serializable
   private _prop4: string;
 
@@ -53,6 +50,10 @@ export class Class1Serializable extends ChangableBase
     }
 
     this.disableChanges();
+
+    // default values of properties
+    this._prop1 = "Hello!";
+    this._prop2 = 0;
 
     // copied from Class1 constructor
     if (arg1 === 1) {
@@ -121,8 +122,8 @@ export class Class1Serializable extends ChangableBase
     return isClass1Json(value);
   }
 
-  protected _getStateOptionsFromJson(json: IClass1Json): IClass1State {
-    const parentOptions = super._getStateOptionsFromJson(json);
+  protected _getStatePropsFromJson(json: IClass1Json): IClass1State {
+    const parentOptions = super._getStatePropsFromJson(json);
     const { state } = json;
     const { _prop1, _prop2, prop3, _arr } = state;
 
@@ -131,22 +132,7 @@ export class Class1Serializable extends ChangableBase
       _prop1,
       _prop2,
       prop3,
-      _arr:
-        _arr === undefined
-          ? undefined
-          : new ChangableArrayCollection<number>(_arr),
-    };
-  }
-
-  protected _getDefaultStateOptions(): IClass1State {
-    const parentOptions = super._getDefaultStateOptions();
-
-    return {
-      ...parentOptions,
-      _prop1: "Hello!",
-      _prop2: 0,
-      prop3: undefined,
-      _arr: undefined,
+      _arr: new ChangableArrayCollection<number>(_arr),
     };
   }
 }

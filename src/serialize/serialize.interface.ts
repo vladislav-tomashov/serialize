@@ -36,7 +36,7 @@ export interface INestedChanges<K> {
 
 export type TChanges<K> = [TOwnChanges, TNestedChanges<K>];
 
-export interface IChangable<K> {
+export interface IChangable<K = string> {
   readonly isChangable: true;
 
   readonly changed: boolean;

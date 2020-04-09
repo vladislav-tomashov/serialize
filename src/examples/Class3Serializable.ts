@@ -6,14 +6,11 @@ import {
 import { IClass3 } from "./IClass3";
 import { ChangableArrayCollection } from "../serialize/changable-collections/ChangableArrayCollection";
 import { IToJSON } from "../serialize/changable-object/changable-object.interface";
-import { IChangable } from "../serialize/serialize.interface";
 
 export interface IClass3State extends IClass2State {
-  prop31?: Class2Serializable;
-  prop32?: ChangableArrayCollection<Class2Serializable>;
+  prop31: Class2Serializable;
+  prop32: ChangableArrayCollection<Class2Serializable>;
 }
-
-export type TClass3StateKey = keyof IClass3State;
 
 export interface IClass3Json extends IClass2Json {
   class3: true;
@@ -28,7 +25,7 @@ export function isClass3Json(value: any): value is IClass3Json {
 }
 
 export class Class3Serializable extends Class2Serializable
-  implements IClass3, IToJSON<IClass3Json>, IChangable<TClass3StateKey> {
+  implements IClass3, IToJSON<IClass3Json> {
   constructor();
 
   constructor(json: IClass3Json);
@@ -81,30 +78,19 @@ export class Class3Serializable extends Class2Serializable
     return isClass3Json(value);
   }
 
-  protected _getStateOptionsFromJson(json: IClass3Json): IClass3State {
-    const parentOptions = super._getStateOptionsFromJson(json);
+  protected _getStatePropsFromJson(json: IClass3Json): IClass3State {
+    const parentOptions = super._getStatePropsFromJson(json);
     const { state } = json;
     const { prop31, prop32 } = state;
 
     return {
       ...parentOptions,
-      prop31:
-        prop31 === undefined
-          ? undefined
-          : new Class2Serializable(prop31 as IClass2Json),
-      prop32:
-        prop32 === undefined
-          ? undefined
-          : new ChangableArrayCollection<Class2Serializable>(
-              (prop32 as IClass2Json[]).map(
-                (x) => new Class2Serializable(x as IClass2Json)
-              )
-            ),
+      prop31: new Class2Serializable(prop31 as IClass2Json),
+      prop32: new ChangableArrayCollection<Class2Serializable>(
+        (prop32 as IClass2Json[]).map(
+          (x) => new Class2Serializable(x as IClass2Json)
+        )
+      ),
     };
-  }
-
-  protected _getDefaultStateOptions(): IClass3State {
-    const parentOptions = super._getDefaultStateOptions();
-    return { ...parentOptions, prop31: undefined, prop32: undefined };
   }
 }

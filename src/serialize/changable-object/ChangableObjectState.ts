@@ -20,14 +20,13 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     IToJSON<{ [key: string]: any }> {
   private _changes = new ObjectChanges<T, K>();
 
-  private _cacheStateKeys?: K[];
-
   // Overrides
   setProperty(prop: K, value: T[K]): void {
-    this._state[prop] = value;
+    this._props[prop] = value;
     this._changes.registerPropertyUpdate(prop);
 
-    const changable = toChangable(this._state[prop]);
+    const changable = toChangable(this._props[prop]);
+
     if (changable) {
       changable.disableChanges();
     }
@@ -54,17 +53,17 @@ export class ChangableObjectState<T extends object, K extends keyof T>
 
   setNestedChanges(changes: TNestedChanges<K>): void {
     changes.forEach(([prop, change]) => {
-      // const changable = toChangable(this._state[prop]);
+      // const changable = toChangable(this._props[prop]);
       // if (!changable) {
-      //   console.log("this._state", this._state);
-      //   console.log("this._state[prop]", this._state[prop]);
+      //   console.log("this._props", this._props);
+      //   console.log("this._props[prop]", this._props[prop]);
       //   throw new Error(
       //     `setNestedChanges(): Property "${prop}" is not IChangable. changes=${JSON.stringify(
       //       change
       //     )}`
       //   );
       // }
-      const changable = (this._state[prop] as unknown) as IChangable<K>;
+      const changable = (this._props[prop] as unknown) as IChangable<K>;
       changable.setChanges(change);
     });
   }
@@ -72,8 +71,8 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   getChangableEntries(): [K, IChangable<any>][] {
     const result = [] as [K, IChangable<any>][];
 
-    this._stateKeys.forEach((prop) => {
-      const changable = toChangable(this._state[prop]);
+    this._propsKeys.forEach((prop) => {
+      const changable = toChangable(this._props[prop]);
       if (changable) {
         result.push([prop, changable]);
       }
@@ -105,7 +104,7 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     changes.forEach((change) => {
       const [key, value] = change;
       const prop = key as K;
-      this._state[prop] = value;
+      this._props[prop] = value;
     });
 
     this.enableOwnChanges();
@@ -142,19 +141,15 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   toJSON(): { [keys: string]: any } {
     const result = {} as T;
 
-    this._stateKeys.forEach((prop) => {
-      result[prop] = this._state[prop];
+    this._propsKeys.forEach((prop) => {
+      result[prop] = this._props[prop];
     });
 
     return result;
   }
 
   // private and protected members
-  protected get _stateKeys(): K[] {
-    if (!this._cacheStateKeys) {
-      this._cacheStateKeys = Object.keys(this._state).map((key) => key as K);
-    }
-
-    return this._cacheStateKeys as K[];
+  protected get _propsKeys(): K[] {
+    return Object.keys(this._props).map((key) => key as K);
   }
 }

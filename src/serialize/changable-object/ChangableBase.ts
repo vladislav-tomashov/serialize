@@ -67,15 +67,10 @@ export class ChangableBase
   }
 
   // eslint-disable-next-line class-methods-use-this
-  protected _getStateOptionsFromJson(
+  protected _getStatePropsFromJson(
     json: IBaseJson,
     ...rest: any[]
   ): IBaseState {
-    return {};
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  protected _getDefaultStateOptions(): IBaseState {
     return {};
   }
 
@@ -87,15 +82,11 @@ export class ChangableBase
       return this._state;
     }
 
-    const stateOptions =
+    const stateProps =
       json && this._isStateJson(json)
-        ? this._getStateOptionsFromJson(json, ...rest)
-        : this._getDefaultStateOptions();
+        ? this._getStatePropsFromJson(json, ...rest)
+        : {};
 
-    const result = new ChangableObjectState<IBaseState, IBaseStateKey>(
-      stateOptions,
-    );
-
-    return result;
+    return new ChangableObjectState<IBaseState, IBaseStateKey>(stateProps);
   }
 }
