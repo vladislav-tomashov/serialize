@@ -4,7 +4,6 @@ import {
   IChangable,
   isChangable,
   TChanges,
-  toChangable,
   IOwnChanges,
   INestedChanges,
   TNestedChanges,
@@ -27,15 +26,11 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
 
   // implementation of interface IOwnChanges
   get hasOwnChanges(): boolean {
-    return this._changes.length > 0;
+    return this._changes.hasEntries;
   }
 
-  disableOwnChanges(): void {
-    this._changes.disable();
-  }
-
-  enableOwnChanges(): void {
-    this._changes.enable();
+  clearOwnChanges(): void {
+    this._changes.clear();
   }
 
   getOwnChanges(): TCollectionChange<T>[] {
@@ -43,9 +38,8 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
   }
 
   setOwnChanges(changes: TCollectionChange<T>[]): void {
-    this.disableOwnChanges();
+    this.clearOwnChanges();
     changes.forEach((x) => this._setChange(x));
-    this.enableOwnChanges();
   }
 
   // implementation of interface INestedChanges
@@ -53,29 +47,21 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
     return this.getChangableEntries().some(([, x]) => x.changed);
   }
 
-  disableNestedChanges(): void {
-    this.getChangableEntries().forEach(([, x]) => x.disableChanges());
-  }
-
-  enableNestedChanges(): void {
-    this.getChangableEntries().forEach(([, x]) => x.enableChanges());
+  clearNestedChanges(): void {
+    this.getChangableEntries().forEach(([, x]) => x.clearChanges());
   }
 
   getNestedChanges(): TNestedChanges<number> {
     return this.getChangableEntries()
-      .filter(([, x]) => x.changed)
+      .filter(
+        ([, x]) =>
+          x.changed && !this._changes.isItemChanged((x as unknown) as T)
+      )
       .map(([prop, x]) => [prop, x.getChanges()] as [number, TChanges<any>]);
   }
 
   setNestedChanges(changes: TNestedChanges<number>): void {
     changes.forEach(([index, change]) => {
-      // const changable = toChangable(this.get(index));
-      // if (!changable) {
-      //   console.log(`this.get(${index})`, this.get(index));
-      //   throw new Error(
-      //     `setNestedChanges(): cannot set changes. Value at index=${index} is not IChangable`
-      //   );
-      // }
       const changable = (this.get(index) as unknown) as IChangable<number>;
       changable.setChanges(change);
     });
@@ -109,26 +95,15 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
     this.setNestedChanges(nestedChanges);
   }
 
-  disableChanges(): void {
-    this.disableOwnChanges();
-    this.disableNestedChanges();
-  }
-
-  enableChanges(): void {
-    this.enableOwnChanges();
-    this.enableNestedChanges();
+  clearChanges(): void {
+    this.clearOwnChanges();
+    this.clearNestedChanges();
   }
 
   // redefine some methods from parent
   set(index: number, value: T): void {
     super.set(index, value);
     this._changes.registerSet(index, value);
-
-    const changable = toChangable(super.get(index));
-
-    if (changable) {
-      changable.disableChanges();
-    }
   }
 
   pop(): T | undefined {
@@ -140,20 +115,12 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
   push(...items: T[]): number {
     const result = super.push(...items);
     this._changes.registerPush(items);
-
-    if (isChangable(items[0])) {
-      items.forEach((x) =>
-        ((x as unknown) as IChangable<number>).disableChanges(),
-      );
-    }
-
     return result;
   }
 
   reverse(): T[] {
     const result = super.reverse();
     this._changes.registerReverse();
-    this.disableNestedChanges();
     return result;
   }
 
@@ -165,20 +132,12 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
   sort(compareFn?: ((a: T, b: T) => number) | undefined): this {
     super.sort(compareFn);
     this._changes.registerSort();
-    this.disableNestedChanges();
     return this;
   }
 
   unshift(...items: T[]): number {
     const result = super.unshift(...items);
     this._changes.registerUnshift(items);
-
-    if (isChangable(items[0])) {
-      items.forEach((x) =>
-        ((x as unknown) as IChangable<number>).disableChanges(),
-      );
-    }
-
     return result;
   }
 
@@ -195,13 +154,6 @@ export class ChangableArrayCollection<T> extends ArrayCollection<T>
   splice(start: any, deleteCount?: any, ...rest: any[]) {
     const result = super.splice(start, deleteCount, ...rest);
     this._changes.registerSplice(start, deleteCount, rest);
-
-    if (rest && isChangable(rest[0])) {
-      rest.forEach((x) =>
-        ((x as unknown) as IChangable<number>).disableChanges(),
-      );
-    }
-
     return result;
   }
 

@@ -37,15 +37,13 @@ export class Class3Serializable extends Class2Serializable
       return;
     }
 
-    this.disableChanges();
-
     this.prop31 = new Class2Serializable();
     this.prop32 = new ChangableArrayCollection([
       new Class2Serializable(),
       new Class2Serializable(),
     ]);
 
-    this.enableChanges();
+    this.clearChanges();
   }
 
   // Proxied stateful properties

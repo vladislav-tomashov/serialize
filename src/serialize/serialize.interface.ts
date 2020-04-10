@@ -11,9 +11,7 @@ export type TNestedChanges<K> = [K, TChanges<any>][];
 export interface IOwnChanges {
   readonly hasOwnChanges: boolean;
 
-  disableOwnChanges(): void;
-
-  enableOwnChanges(): void;
+  clearOwnChanges(): void;
 
   getOwnChanges(): TOwnChanges;
 
@@ -23,9 +21,7 @@ export interface IOwnChanges {
 export interface INestedChanges<K> {
   readonly hasNestedChanges: boolean;
 
-  disableNestedChanges(): void;
-
-  enableNestedChanges(): void;
+  clearNestedChanges(): void;
 
   getNestedChanges(): TNestedChanges<K>;
 
@@ -41,9 +37,7 @@ export interface IChangable<K = string> {
 
   readonly changed: boolean;
 
-  disableChanges(): void;
-
-  enableChanges(): void;
+  clearChanges(): void;
 
   getChanges(): TChanges<K>;
 

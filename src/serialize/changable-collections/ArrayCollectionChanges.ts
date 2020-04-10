@@ -32,7 +32,7 @@ type TSpliceChange<T> = [
   CollectionChangeType.Splice,
   number,
   number | undefined,
-  T[] | undefined,
+  T[] | undefined
 ];
 
 type TChange<T> =
@@ -78,31 +78,32 @@ function getChange<T>(change: TChange<T>, source: T[]): TCollectionChange<T> {
 export class ArrayCollectionChanges<T> {
   private _log: Array<TChange<T>> = [];
 
-  private _disabled = false;
+  private _itemsInChanges = new Set<T>();
 
-  get length() {
-    return this._log.length;
+  private __allItemsChanged = false;
+
+  private get _allItemsChanged() {
+    return this.__allItemsChanged;
   }
 
-  disable() {
-    this._clear();
-
-    if (this._disabled) {
-      return;
-    }
-    this._disabled = true;
-  }
-
-  enable() {
-    if (!this._disabled || this.length > 0) {
+  private set _allItemsChanged(value: boolean) {
+    if (this.__allItemsChanged === value) {
       return;
     }
 
-    this._disabled = false;
+    if (this._itemsInChanges.size > 0) {
+      this._itemsInChanges.clear();
+    }
+
+    this.__allItemsChanged = value;
+  }
+
+  get hasEntries() {
+    return this._log.length > 0;
   }
 
   registerSplice(start: number, deleteCount: number, items: T[]) {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
@@ -114,19 +115,23 @@ export class ArrayCollectionChanges<T> {
     ] as TSpliceChange<T>;
 
     this._log.push(change);
+
+    items.forEach((x) => this._itemsInChanges.add(x));
   }
 
   registerSet(index: number, value: T) {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
     const change = [CollectionChangeType.Set, index, value] as TSetChange<T>;
     this._log.push(change);
+
+    this._itemsInChanges.add(value);
   }
 
   registerPop() {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
@@ -135,7 +140,7 @@ export class ArrayCollectionChanges<T> {
   }
 
   registerShift() {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
@@ -144,64 +149,83 @@ export class ArrayCollectionChanges<T> {
   }
 
   registerClear() {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
     const change = [CollectionChangeType.Clear] as TClearChange;
     this._log = [];
     this._log.push(change);
-    this._disabled = true;
+    this._allItemsChanged = true;
   }
 
   registerSort() {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
     const change = [CollectionChangeType.Sort] as TSortChange;
     this._log = [];
     this._log.push(change);
-    this._disabled = true;
+    this._allItemsChanged = true;
   }
 
   registerReverse() {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
     const change = [CollectionChangeType.Reverse] as TReverseChange;
     this._log = [];
     this._log.push(change);
-    this._disabled = true;
+    this._allItemsChanged = true;
   }
 
   registerPush(items: T[]) {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
     const change = [CollectionChangeType.Push, items] as TPushChange<T>;
     this._log.push(change);
+
+    items.forEach((x) => this._itemsInChanges.add(x));
   }
 
   registerUnshift(items: T[]) {
-    if (this._disabled) {
+    if (this._allItemsChanged) {
       return;
     }
 
     const change = [CollectionChangeType.Unshift, items] as TUnshiftChange<T>;
     this._log.push(change);
+
+    items.forEach((x) => this._itemsInChanges.add(x));
   }
 
   getChanges(source: T[]): TCollectionChange<T>[] {
     return this._log.map((x) => getChange(x, source));
   }
 
-  // private
-  private _clear() {
+  isItemChanged(item: T): boolean {
+    if (this._allItemsChanged) {
+      return true;
+    }
+
+    return this._itemsInChanges.has(item);
+  }
+
+  clear() {
     if (this._log.length > 0) {
       this._log = [];
+    }
+
+    if (this._itemsInChanges.size > 0) {
+      this._itemsInChanges.clear();
+    }
+
+    if (this._allItemsChanged) {
+      this._allItemsChanged = false;
     }
   }
 }

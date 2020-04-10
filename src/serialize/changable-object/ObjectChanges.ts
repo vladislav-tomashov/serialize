@@ -6,46 +6,28 @@ export class ObjectChanges<T, K extends keyof T> {
 
   private _disabled = false;
 
-  get length() {
-    return this._log.size;
-  }
-
-  disable() {
-    this._clear();
-
-    if (this._disabled) {
-      return;
-    }
-    this._disabled = true;
-  }
-
-  enable() {
-    if (!this._disabled) {
-      return;
-    }
-
-    this._disabled = false;
+  get hasEnries() {
+    return this._log.size > 0;
   }
 
   registerPropertyUpdate(prop: K) {
-    if (this._disabled) {
-      return;
-    }
-
     this._log.add(prop);
   }
 
   getChanges(source: IGetProperty<T, K>): TPropertyChange<any>[] {
     const result = Array.from(this._log).map(
-      (x) => [x, source.getProperty(x)] as TPropertyChange<any>,
+      (x) => [x, source.getProperty(x)] as TPropertyChange<any>
     );
 
     return result;
   }
 
-  // private
-  private _clear() {
-    if (this.length > 0) {
+  isPropertyChanged(property: K): boolean {
+    return this._log.has(property);
+  }
+
+  clear() {
+    if (this._log.size > 0) {
       this._log.clear();
     }
   }

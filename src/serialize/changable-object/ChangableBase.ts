@@ -44,12 +44,8 @@ export class ChangableBase
     return this._state.changed;
   }
 
-  disableChanges(): void {
-    this._state.disableChanges();
-  }
-
-  enableChanges(): void {
-    this._state.enableChanges();
+  clearChanges(): void {
+    this._state.clearChanges();
   }
 
   getChanges(): [TObjectChange, TNestedChanges<IBaseStateKey>] {

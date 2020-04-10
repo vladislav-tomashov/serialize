@@ -38,15 +38,13 @@ export class Class2Serializable extends ChangableBase
       return;
     }
 
-    this.disableChanges();
-
     this.prop1 = new Class1Serializable(5, "hfufhvhf");
     this.prop2 = new ChangableArrayCollection([
       new Class1Serializable(1, "test1"),
       new Class1Serializable(2, "test2"),
     ]);
 
-    this.enableChanges();
+    this.clearChanges();
   }
 
   // Proxied state properties

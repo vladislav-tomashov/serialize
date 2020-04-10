@@ -24,12 +24,6 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   setProperty(prop: K, value: T[K]): void {
     this._props[prop] = value;
     this._changes.registerPropertyUpdate(prop);
-
-    const changable = toChangable(this._props[prop]);
-
-    if (changable) {
-      changable.disableChanges();
-    }
   }
 
   // Implementation of interface INestedChanges
@@ -37,32 +31,20 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     return this.getChangableEntries().some(([, x]) => x.changed);
   }
 
-  disableNestedChanges(): void {
-    this.getChangableEntries().forEach(([, x]) => x.disableChanges());
-  }
-
-  enableNestedChanges(): void {
-    this.getChangableEntries().forEach(([, x]) => x.enableChanges());
+  clearNestedChanges(): void {
+    this.getChangableEntries().forEach(([, x]) => x.clearChanges());
   }
 
   getNestedChanges(): TNestedChanges<K> {
     return this.getChangableEntries()
-      .filter(([, x]) => x.changed)
+      .filter(
+        ([prop, x]) => x.changed && !this._changes.isPropertyChanged(prop)
+      )
       .map(([prop, x]) => [prop, x.getChanges()] as [K, TChanges<any>]);
   }
 
   setNestedChanges(changes: TNestedChanges<K>): void {
     changes.forEach(([prop, change]) => {
-      // const changable = toChangable(this._props[prop]);
-      // if (!changable) {
-      //   console.log("this._props", this._props);
-      //   console.log("this._props[prop]", this._props[prop]);
-      //   throw new Error(
-      //     `setNestedChanges(): Property "${prop}" is not IChangable. changes=${JSON.stringify(
-      //       change
-      //     )}`
-      //   );
-      // }
       const changable = (this._props[prop] as unknown) as IChangable<K>;
       changable.setChanges(change);
     });
@@ -83,15 +65,11 @@ export class ChangableObjectState<T extends object, K extends keyof T>
 
   // Implementation of interface IOwnChanges
   get hasOwnChanges(): boolean {
-    return this._changes.length > 0;
+    return this._changes.hasEnries;
   }
 
-  disableOwnChanges(): void {
-    this._changes.disable();
-  }
-
-  enableOwnChanges(): void {
-    this._changes.enable();
+  clearOwnChanges(): void {
+    this._changes.clear();
   }
 
   getOwnChanges(): TObjectChange {
@@ -99,15 +77,13 @@ export class ChangableObjectState<T extends object, K extends keyof T>
   }
 
   setOwnChanges(changes: TObjectChange): void {
-    this.disableOwnChanges();
+    this.clearOwnChanges();
 
     changes.forEach((change) => {
       const [key, value] = change;
       const prop = key as K;
       this._props[prop] = value;
     });
-
-    this.enableOwnChanges();
   }
 
   // Implementation of interface IChangable
@@ -117,14 +93,9 @@ export class ChangableObjectState<T extends object, K extends keyof T>
     return this.hasOwnChanges || this.hasNestedChanges;
   }
 
-  disableChanges(): void {
-    this.disableOwnChanges();
-    this.disableNestedChanges();
-  }
-
-  enableChanges(): void {
-    this.enableOwnChanges();
-    this.enableNestedChanges();
+  clearChanges(): void {
+    this.clearOwnChanges();
+    this.clearNestedChanges();
   }
 
   getChanges(): [TObjectChange, TNestedChanges<K>] {

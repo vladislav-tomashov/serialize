@@ -49,11 +49,10 @@ export class Class1Serializable extends ChangableBase
       return;
     }
 
-    this.disableChanges();
-
     // default values of properties
     this._prop1 = "Hello!";
     this._prop2 = 0;
+    this.prop3 = "";
 
     // copied from Class1 constructor
     if (arg1 === 1) {
@@ -68,7 +67,7 @@ export class Class1Serializable extends ChangableBase
 
     this.prop3 = "abc";
 
-    this.enableChanges();
+    this.clearChanges();
   }
 
   // Implementation of interface IClass1

@@ -1,6 +1,5 @@
 import { IClass3 } from "./IClass3";
 import { IClass4 } from "./IClass4";
-import { Class3Serializable } from "./Class3Serializable";
 import {
   IBaseState,
   IBaseJson,
@@ -9,7 +8,6 @@ import {
 import { IToJSON } from "../serialize/changable-object/changable-object.interface";
 
 export interface IClass4State extends IBaseState {
-  ref: Class3Serializable;
   prop41: string;
 }
 
@@ -27,35 +25,28 @@ export function isClass4Json(value: any): value is IClass4Json {
 
 export class Class4Serializable extends ChangableBase
   implements IClass4, IToJSON<IClass4Json> {
-  constructor(json: IClass4Json, pRef: Class3Serializable);
+  ref: IClass3;
 
-  constructor(pRef: Class3Serializable, pProp41: string);
+  constructor(json: IClass4Json, pRef: IClass3);
+
+  constructor(pRef: IClass3, pProp41: string);
 
   constructor(pRef: any, pProp41: any) {
-    super(pRef, pProp41);
+    super(pRef);
 
     if (this._isStateJson(pRef)) {
+      this.ref = pProp41;
       return;
     }
-
-    this.disableChanges();
 
     // copied from Class1 constructor
     this.ref = pRef;
     this.prop41 = pProp41;
 
-    this.enableChanges();
+    this.clearChanges();
   }
 
   // Proxied state properties
-  public get ref() {
-    return this._state.getProperty("ref") as IClass3;
-  }
-
-  public set ref(value: IClass3) {
-    this._state.setProperty("ref", value);
-  }
-
   public get prop41() {
     return this._state.getProperty("prop41") as string;
   }
@@ -75,10 +66,7 @@ export class Class4Serializable extends ChangableBase
     return isClass4Json(value);
   }
 
-  protected _getStatePropsFromJson(
-    json: IClass4Json,
-    pRef: Class3Serializable
-  ): IClass4State {
+  protected _getStatePropsFromJson(json: IClass4Json): IClass4State {
     const parentOptions = super._getStatePropsFromJson(json);
 
     const { state } = json;
@@ -86,7 +74,6 @@ export class Class4Serializable extends ChangableBase
 
     return {
       ...parentOptions,
-      ref: pRef,
       prop41,
     };
   }
