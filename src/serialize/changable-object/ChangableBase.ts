@@ -28,8 +28,8 @@ export class ChangableBase
   implements IChangable<IBaseStateKey>, IToJSON<IBaseJson> {
   protected _state: ChangableObjectState<IBaseState, IBaseStateKey>;
 
-  constructor(json?: IBaseJson, ...rest: any[]) {
-    this._state = this._getStateFromJson(json, ...rest);
+  constructor(json?: IBaseJson) {
+    this._state = this._getStateFromJson(json);
   }
 
   // implementation of interface IToJSON
@@ -63,25 +63,19 @@ export class ChangableBase
   }
 
   // eslint-disable-next-line class-methods-use-this
-  protected _getStatePropsFromJson(
-    json: IBaseJson,
-    ...rest: any[]
-  ): IBaseState {
+  protected _getStatePropsFromJson(json: IBaseJson): IBaseState {
     return {};
   }
 
   private _getStateFromJson(
-    json?: IBaseJson,
-    ...rest: any[]
+    json?: IBaseJson
   ): ChangableObjectState<IBaseState, IBaseStateKey> {
     if (this._state) {
       return this._state;
     }
 
     const stateProps =
-      json && this._isStateJson(json)
-        ? this._getStatePropsFromJson(json, ...rest)
-        : {};
+      json && this._isStateJson(json) ? this._getStatePropsFromJson(json) : {};
 
     return new ChangableObjectState<IBaseState, IBaseStateKey>(stateProps);
   }
